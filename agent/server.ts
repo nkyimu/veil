@@ -14,7 +14,7 @@ import { type Address } from "viem";
 import { storeCredential, answerQuery, checkEarnings } from "./guardian";
 
 const app = express();
-const PORT = process.env.GUARDIAN_PORT || 3000;
+const PORT = process.env.GUARDIAN_PORT || 3001;
 
 // Middleware
 app.use(express.json());
@@ -212,11 +212,28 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 
 // --- Server Start ---
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
   console.log(`[Guardian Server] Listening on port ${PORT}`);
   console.log(`[Guardian Server] Health check: GET http://localhost:${PORT}/health`);
   console.log(`[Guardian Server] Submit query: POST http://localhost:${PORT}/query (x402 required)`);
   console.log(`[Guardian Server] Check earnings: GET http://localhost:${PORT}/earnings?dataOwner=0x...`);
+
+  // Initialize guardian — store demo credentials and start monitoring
+  const initGuardian = async () => {
+    console.log("[Guardian Server] Initializing guardian agent...");
+    // Store demo credentials
+    await storeCredential("age", "28");
+    await storeCredential("creditRange", "720");
+    await storeCredential("location", "Lagos, Nigeria");
+    await storeCredential("income", "65000");
+    console.log("[Guardian Server] Demo credentials stored. Guardian ready.");
+  };
+
+  try {
+    await initGuardian();
+  } catch (error) {
+    console.error("[Guardian Server] Initialization error:", error);
+  }
 });
 
 // Graceful shutdown

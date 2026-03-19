@@ -490,6 +490,4 @@ async function main() {
   await monitorQueries();
 }
 
-main().catch(console.error);
-
-export { storeCredential, answerQuery, checkEarnings };
+export { storeCredential, answerQuery, checkEarnings, main as startGuardian };
