@@ -19,8 +19,9 @@ export default function QueryBrowse() {
   const [successTx, setSuccessTx] = useState<`0x${string}` | null>(null);
 
   const { submit } = useSubmitQuery();
-  const { credentials, loading: credsLoading } = useCredentialEvents();
-  const { answers, loading: answersLoading } = useQueryAnsweredEvents(5);
+  const { credentials, loading: credsLoading, isDemo: credIsDemo } = useCredentialEvents();
+  const { answers, loading: answersLoading, isDemo: answersIsDemo } = useQueryAnsweredEvents(5);
+  const isDemoMode = credIsDemo || answersIsDemo;
 
   const handleSubmitQuery = async () => {
     if (!address || !selectedDataOwner || selectedCredType < 0 || !question) {
@@ -65,6 +66,15 @@ export default function QueryBrowse() {
 
   return (
     <div className="flex flex-col gap-8">
+      {isDemoMode && (
+        <div className="bg-veil-900/20 border border-veil-700/50 rounded-lg p-3 flex items-center gap-3">
+          <span className="text-veil-400 font-mono text-xs font-bold tracking-widest">⚡ DEMO MODE</span>
+          <span className="text-gray-400 text-xs">
+            Showing sample credentials — no real on-chain data found yet. Store a credential first to see live data.
+          </span>
+        </div>
+      )}
+
       <section>
         <h2 className="text-2xl font-bold mb-2">Browse & Query Credentials</h2>
         <p className="text-gray-400 text-sm mb-6">
@@ -114,9 +124,16 @@ export default function QueryBrowse() {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <p className="font-semibold">{cred.credTypeName}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold">{cred.credTypeName}</p>
+                      {cred.isDemo && (
+                        <span className="text-[10px] font-mono font-bold text-veil-500 border border-veil-700 rounded px-1 py-px leading-none">
+                          DEMO
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-gray-500 font-mono mt-1">
-                      {formatAddress(cred.owner)}
+                      {cred.persona ? `${cred.persona} · ` : ""}{formatAddress(cred.owner)}
                     </p>
                   </div>
                   <div className="text-right">
