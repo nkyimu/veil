@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { useGetEarnings, useWithdrawRevenue } from "@/hooks/useVeilVault";
+import { useGetEarnings, useWithdrawRevenue, useMyEarningsHistory, EarningsEntry } from "@/hooks/useVeilVault";
 import { formatUSDA, formatAddress } from "@/lib/constants";
 
 export default function EarningsDashboard() {
@@ -11,39 +11,12 @@ export default function EarningsDashboard() {
     address
   );
   const { withdraw } = useWithdrawRevenue();
+  const { history: earningsHistory, loading: historyLoading } = useMyEarningsHistory(
+    address as `0x${string}` | undefined,
+    10
+  );
   const [withdrawing, setWithdrawing] = useState(false);
   const [successTx, setSuccessTx] = useState<string | null>(null);
-
-  // Simulate mock query data for demo
-  const mockQueries = [
-    {
-      id: 47,
-      requester: "0x1234567890123456789012345678901234567890",
-      question: "Is user over 18?",
-      type: "Age",
-      answer: true,
-      payment: 20000n,
-      time: "2 min ago",
-    },
-    {
-      id: 46,
-      requester: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      question: "Credit score above 700?",
-      type: "CreditRange",
-      answer: true,
-      payment: 20000n,
-      time: "15 min ago",
-    },
-    {
-      id: 45,
-      requester: "0xfedcbafedcbafedcbafedcbafedcbafedcbafed",
-      question: "Located in US?",
-      type: "Location",
-      answer: false,
-      payment: 20000n,
-      time: "1 hour ago",
-    },
-  ];
 
   const handleWithdraw = async () => {
     if (!address || pending === 0n) return;
@@ -145,40 +118,58 @@ export default function EarningsDashboard() {
 
       {/* Recent Queries */}
       <section>
-        <h3 className="text-lg font-semibold mb-3">Recent Queries</h3>
-        <div className="flex flex-col gap-3">
-          {mockQueries.map((q) => (
-            <div
-              key={q.id}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-4"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-gray-500 font-mono">
-                  #{q.id} • {formatAddress(q.requester)}
-                </span>
-                <span className="text-xs text-gray-500">{q.time}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-sm font-medium mb-1">{q.question}</p>
-                  <div className="flex gap-2">
-                    <span
-                      className={`text-xs font-semibold ${
-                        q.answer ? "text-green-400" : "text-red-400"
-                      }`}
-                    >
-                      {q.answer ? "YES" : "NO"}
+        <h3 className="text-lg font-semibold mb-3">
+          Recent Queries
+          {!historyLoading && earningsHistory.length > 0 && (
+            <span className="ml-2 text-xs text-gray-500 font-normal">
+              {earningsHistory.length} on-chain
+            </span>
+          )}
+        </h3>
+        {historyLoading ? (
+          <div className="text-gray-500 text-sm py-4 text-center">Loading query history…</div>
+        ) : earningsHistory.length === 0 ? (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 text-center text-gray-500 text-sm">
+            No queries yet. Store a credential and share your address — services will query it.
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {(earningsHistory as EarningsEntry[]).map((q) => {
+              const ts = q.answeredAt > 0n
+                ? new Date(Number(q.answeredAt) * 1000).toLocaleString()
+                : "Pending";
+              const statusColor = q.answeredAt === 0n
+                ? "bg-yellow-900/40 text-yellow-400"
+                : "bg-green-900/40 text-green-400";
+              return (
+                <div
+                  key={q.queryId.toString()}
+                  className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-gray-500 font-mono">
+                      #{q.queryId.toString()} • from {formatAddress(q.requester)}
                     </span>
-                    <span className="text-xs text-gray-500">{q.type}</span>
+                    <span className="text-xs text-gray-500">{ts}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex gap-2 items-center">
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusColor}`}>
+                          {q.answeredAt > 0n ? "ANSWERED" : "PENDING"}
+                        </span>
+                        <span className="text-xs text-gray-400">{q.credTypeName}</span>
+                      </div>
+                    </div>
+                    <span className="text-veil-400 font-semibold ml-4">
+                      {formatUSDA(q.payment)}
+                    </span>
                   </div>
                 </div>
-                <span className="text-veil-400 font-semibold ml-4">
-                  {formatUSDA(q.payment)}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Stats Info */}

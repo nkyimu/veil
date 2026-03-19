@@ -222,10 +222,98 @@ export type LiveAnswer = {
   answeredAt: bigint;
 };
 
+export type EarningsEntry = LiveAnswer & { payment: bigint };
+
 /**
  * Fetches recent QueryAnswered events and enriches with query details.
  * Returns up to `limit` most-recent answered queries.
  */
+/**
+ * Fetches QueryCreated events where the connected user is the dataOwner,
+ * then enriches with answer status. Used on the Earnings page.
+ */
+export function useMyEarningsHistory(address: `0x${string}` | undefined, limit = 10) {
+  const publicClient = usePublicClient();
+  const [history, setHistory] = useState<EarningsEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!publicClient || !address) {
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function fetchHistory() {
+      try {
+        // Filter QueryCreated by indexed dataOwner — efficient on-chain filter
+        const created = await publicClient!.getContractEvents({
+          address: VEIL_VAULT_ADDRESS,
+          abi: VEIL_VAULT_ABI,
+          eventName: "QueryCreated",
+          args: { dataOwner: address },
+          fromBlock: BigInt(0),
+          toBlock: "latest",
+        });
+
+        // Most recent first, capped at limit
+        const recent = created.slice(-limit).reverse();
+
+        const enriched = await Promise.all(
+          recent.map(async (log) => {
+            const args = log.args as {
+              queryId: bigint;
+              requester: `0x${string}`;
+              dataOwner: `0x${string}`;
+              credType: number;
+              payment: bigint;
+            };
+            try {
+              const query = await publicClient!.readContract({
+                address: VEIL_VAULT_ADDRESS,
+                abi: VEIL_VAULT_ABI,
+                functionName: "getQuery",
+                args: [args.queryId],
+              }) as {
+                requester: `0x${string}`;
+                dataOwner: `0x${string}`;
+                credType: number;
+                answeredAt: bigint;
+              };
+              // answeredAt == 0 means not yet answered
+              return {
+                queryId: args.queryId,
+                answer: query.answeredAt > 0n, // answered = true (answer details require QueryAnswered event lookup)
+                requester: args.requester,
+                dataOwner: args.dataOwner,
+                credType: args.credType,
+                credTypeName: CREDENTIAL_TYPES[args.credType] ?? "Unknown",
+                answeredAt: query.answeredAt,
+                payment: args.payment,
+              };
+            } catch {
+              return null;
+            }
+          })
+        );
+
+        const valid = enriched.filter(Boolean) as EarningsEntry[];
+        if (!cancelled) setHistory(valid);
+      } catch (err) {
+        console.error("useMyEarningsHistory: fetch failed", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    fetchHistory();
+    return () => { cancelled = true; };
+  }, [publicClient, address, limit]);
+
+  return { history, loading };
+}
+
 export function useQueryAnsweredEvents(limit = 10) {
   const publicClient = usePublicClient();
   const [answers, setAnswers] = useState<LiveAnswer[]>([]);
