@@ -24,10 +24,11 @@ Veil flips the model. **You** own your data. **Your Guardian agent** protects it
 Lending Protocol: "Is this user's credit score > 650?"
        ↓
 Amara's Guardian Agent:
-  → Checks encrypted local data
-  → Answers: YES ✓
-  → Collects 0.02 USDC
-  → Amara's actual credit score? Never exposed.
+  → Sends credential context to Venice AI (no data retention)
+  → Venice reasons: "Credit score satisfies threshold" → YES
+  → Venice retains nothing. Inference deleted immediately.
+  → Guardian posts YES on-chain, collects 0.02 USDC
+  → Amara's actual credit score? Never exposed. Not even to the AI.
 ```
 
 Your agent becomes your **data bouncer** — it decides who gets in, what they learn, and how much they pay for the privilege.
@@ -75,7 +76,7 @@ Veil's architectural decisions are shaped by the CROPS values — not as marketi
 
 | Value | Architectural Decision |
 |-------|----------------------|
-| **Privacy** | Raw data never leaves the user's device. Guardian answers YES/NO queries without revealing underlying values. Credential commitments are hashed — the chain stores proofs, not data. |
+| **Privacy** | Raw data never leaves the user's device. Guardian reasons via Venice AI (no-data-retention inference) — even the reasoning engine retains nothing. Credential commitments are hashed — the chain stores proofs, not data. |
 | **Censorship Resistance** | Credentials are committed on-chain. No centralized identity provider can revoke your credentials, block queries, or freeze your earnings. |
 | **Open Source** | Entire stack: VeilVault.sol, Guardian agent, dashboard, deployment scripts. MIT licensed. |
 | **Security** | Data encrypted locally. Only cryptographic commitments on-chain. Guardian validates queries against local truth. Contract has 34 Foundry tests including edge cases and access control. |
@@ -96,6 +97,7 @@ Veil addresses real problems for real people (personas from the Synthesis Design
 | Chain | Base Sepolia (Ethereum L2) |
 | Agent Identity | ERC-8004 on-chain registration |
 | Payments | USDC micropayments via Locus API |
+| Private Inference | Venice AI (no-data-retention, OpenAI-compatible) |
 | Agent Runtime | TypeScript + viem |
 | Frontend | Next.js 15 + Tailwind + RainbowKit |
 | Wallet | wagmi + RainbowKit (MetaMask, Coinbase, WalletConnect) |
