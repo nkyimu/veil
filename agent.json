@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0",
+  "name": "VeilVault Guardian",
+  "description": "An autonomous AI guardian that monetizes your private data without exposing it. Stores credentials on Base, listens for incoming queries, generates ZK proofs, and auto-routes USDC earnings. No human required per query cycle.",
+  "version": "1.0.0",
+  "hackathon": "synthesis-2026",
+  "deployedContract": "0x2f881af96415a452807baf6a23b73129d57f8d7a",
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "operatorWallet": "0x2A32a443e07C7C72191FcC5c293324B2eFC02bc6",
+  "erc8004Identity": {
+    "tokenId": "pending-registration",
+    "contractAddress": "0x2f881af96415a452807baf6a23b73129d57f8d7a",
+    "registrationTx": "pending-registration",
+    "_note": "Run `npm run register-erc8004` with GUARDIAN_PRIVATE_KEY set to complete ERC-8004 on-chain registration. Registry contract pending finalized ERC-8004 spec deployment."
+  },
+  "supportedTools": [
+    "foundry",
+    "viem",
+    "wagmi",
+    "x402",
+    "self-protocol-zk",
+    "rainbowkit",
+    "ethers"
+  ],
+  "techStack": [
+    "Next.js 15",
+    "TypeScript (strict)",
+    "Tailwind CSS",
+    "Base Sepolia",
+    "ERC-8004",
+    "x402 micropayments",
+    "Self Protocol ZK",
+    "Foundry",
+    "wagmi 3.5",
+    "viem 2.47",
+    "RainbowKit 2.2",
+    "Venice AI (private inference)"
+  ],
+  "computeConstraints": {
+    "maxTokensPerTask": 100000,
+    "guardianPollIntervalMs": 3000,
+    "queryTimeoutMs": 30000
+  },
+  "taskCategories": [
+    "credential-vault",
+    "agent-identity",
+    "payment-gating",
+    "zk-proof-generation",
+    "autonomous-query-response"
+  ],
+  "autonomousCapabilities": {
+    "listensForOnchainEvents": true,
+    "autoRespondsToQueries": true,
+    "selfInitiatesRevenueWithdrawal": false,
+    "requiresHumanPerCycle": false,
+    "humanInterventionRequired": "Only for initial credential storage and manual withdrawal trigger"
+  },
+  "agentHarness": "openclaw",
+  "builtBy": {
+    "humanOperator": "Amantu",
+    "agentSwarm": [
+      { "agent": "Baker", "role": "Research & strategy planner", "platform": "OpenClaw" },
+      { "agent": "Dorothy", "role": "Deep research & synthesis", "platform": "OpenClaw" },
+      { "agent": "Adze", "role": "Developer (contracts + frontend)", "platform": "OpenClaw" },
+      { "agent": "Banneker", "role": "Architecture review & QA", "platform": "OpenClaw" }
+    ]
+  },
+  "repoUrl": "https://github.com/blu3dot/veil",
+  "demoUrl": "http://localhost:3000"
+}
