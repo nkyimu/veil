@@ -19,35 +19,109 @@ const PORT = process.env.GUARDIAN_PORT || 3001;
 // Middleware
 app.use(express.json());
 
-// x402 payment gateway middleware
-// Checks for valid payment header before processing /query requests
-const x402Middleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// --- x402 Payment Gateway ---
+// The Guardian is a paid service. Queriers must pay USDC to get answers.
+// Flow: 1) Querier hits /query without payment → gets 402 + payment instructions
+//       2) Querier pays via Locus → gets transaction_id
+//       3) Querier retries /query with X-Payment-TxId header → Guardian verifies + answers
+
+const LOCUS_API_URL = process.env.LOCUS_API_URL || "https://beta-api.paywithlocus.com/api";
+const LOCUS_API_KEY = process.env.LOCUS_API_KEY || "";
+const QUERY_PRICE_USDC = process.env.QUERY_PRICE_USDC || "0.02";
+const GUARDIAN_WALLET = process.env.LOCUS_WALLET_ADDRESS || "";
+
+/**
+ * Verify a Locus payment transaction
+ * Returns true if the transaction is confirmed and matches expected amount
+ */
+async function verifyLocusPayment(txId: string): Promise<{ valid: boolean; reason: string }> {
+  if (!LOCUS_API_KEY) {
+    // No Locus key = dev mode, accept any txId
+    console.log(`[x402] Dev mode — accepting payment ${txId} without verification`);
+    return { valid: true, reason: "dev-mode" };
+  }
+
+  try {
+    const res = await fetch(`${LOCUS_API_URL}/pay/transactions/${txId}`, {
+      headers: { Authorization: `Bearer ${LOCUS_API_KEY}` },
+    });
+
+    if (!res.ok) {
+      return { valid: false, reason: `Locus API returned ${res.status}` };
+    }
+
+    const data = await res.json() as any;
+    const tx = data?.data?.transaction;
+
+    if (!tx) {
+      return { valid: false, reason: "Transaction not found" };
+    }
+
+    if (tx.status !== "CONFIRMED") {
+      return { valid: false, reason: `Transaction status: ${tx.status} (need CONFIRMED)` };
+    }
+
+    // Check amount (allow >= expected)
+    const paidAmount = parseFloat(tx.amount_usdc || "0");
+    const requiredAmount = parseFloat(QUERY_PRICE_USDC);
+    if (paidAmount < requiredAmount) {
+      return { valid: false, reason: `Paid ${paidAmount} USDC, need ${requiredAmount}` };
+    }
+
+    console.log(`[x402] Payment verified: ${txId} — ${paidAmount} USDC (CONFIRMED)`);
+    return { valid: true, reason: "verified" };
+  } catch (error) {
+    console.error(`[x402] Locus verification error:`, error);
+    return { valid: false, reason: `Verification failed: ${error instanceof Error ? error.message : "unknown"}` };
+  }
+}
+
+// x402 middleware — returns 402 if no payment, verifies if payment provided
+const x402Middleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (req.path !== "/query") {
     return next();
   }
 
-  // Check for x402 payment header
-  const paymentHeader = req.header("X-Payment-Proof");
-  const amountHeader = req.header("X-Payment-Amount");
+  const txId = req.header("X-Payment-TxId") || req.header("X-Payment-Proof");
 
-  if (!paymentHeader || !amountHeader) {
-    // Return 402 Payment Required
+  if (!txId) {
+    // No payment — return 402 with instructions
     res.status(402).json({
       error: "Payment required",
       statusCode: 402,
-      message: "This endpoint requires x402 payment. Include X-Payment-Proof and X-Payment-Amount headers.",
-      paymentRequired: {
-        amount: "0.001", // USDC
+      protocol: "x402",
+      message: `This query costs ${QUERY_PRICE_USDC} USDC. Pay via Locus, then retry with the transaction ID.`,
+      paymentDetails: {
+        amount: QUERY_PRICE_USDC,
         currency: "USDC",
+        chain: "Base",
+        recipient: GUARDIAN_WALLET,
         gateway: "Locus",
-        paymentUrl: `${process.env.LOCUS_API_URL}/pay`,
+        payEndpoint: `${LOCUS_API_URL}/pay/send`,
+        instructions: [
+          `POST ${LOCUS_API_URL}/pay/send with {"to_address": "${GUARDIAN_WALLET}", "amount": ${QUERY_PRICE_USDC}, "memo": "Veil query"}`,
+          `Get transaction_id from response`,
+          `Retry this request with header: X-Payment-TxId: <transaction_id>`,
+        ],
       },
     });
     return;
   }
 
-  // Validate payment (simplified for MVP — in production, verify on-chain)
-  console.log(`[Guardian Server] Payment received: ${amountHeader} USDC`);
+  // Verify payment
+  const { valid, reason } = await verifyLocusPayment(txId);
+  if (!valid) {
+    res.status(402).json({
+      error: "Payment verification failed",
+      statusCode: 402,
+      reason,
+      txId,
+    });
+    return;
+  }
+
+  // Payment verified — continue to query handler
+  (req as any).paymentTxId = txId;
   next();
 };
 
@@ -61,8 +135,21 @@ app.use(x402Middleware);
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
-    timestamp: new Date().toISOString(),
+    agent: "Veil Guardian",
     version: "1.0.0",
+    inference: {
+      provider: "Venice AI",
+      model: process.env.VENICE_MODEL || "llama-3.3-70b",
+      dataRetention: "none",
+    },
+    payments: {
+      protocol: "x402",
+      gateway: "Locus",
+      queryPrice: `${QUERY_PRICE_USDC} USDC`,
+      chain: "Base",
+    },
+    contract: process.env.VEIL_VAULT_CONTRACT || "0x2f881af96415a452807baf6a23b73129d57f8d7a",
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -89,16 +176,15 @@ app.post("/query", async (req, res) => {
       });
     }
 
-    console.log(`[Guardian Server] Processing query ${queryId}: "${question || "unknown question"}"`);
+    const paymentTxId = (req as any).paymentTxId || "dev-mode";
+    console.log(`[Guardian Server] Processing query ${queryId}: "${question || "unknown"}" (paid: ${paymentTxId})`);
 
-    // Answer the query
-    // In production: decode the question, evaluate credential, generate ZK proof
-    // For MVP: simple yes/no response
+    // Route to Venice-powered Guardian for intelligent evaluation
     const credTypeIndex = ["age", "creditRange", "location", "income", "custom"].indexOf(credentialType);
     const queryHash = `0x${Buffer.from(question || "unknown").toString("hex").padEnd(64, "0")}` as `0x${string}`;
 
     const answer = await answerQuery(
-      queryId,
+      BigInt(queryId),
       requester as Address,
       credTypeIndex,
       queryHash
@@ -108,6 +194,9 @@ app.post("/query", async (req, res) => {
       success: true,
       queryId,
       answer,
+      paymentTxId,
+      protocol: "x402",
+      inference: "venice-ai-no-data-retention",
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
