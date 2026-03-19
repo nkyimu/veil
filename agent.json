@@ -10,9 +10,10 @@
   "operatorWallet": "0x2A32a443e07C7C72191FcC5c293324B2eFC02bc6",
   "erc8004Identity": {
     "tokenId": "pending-registration",
-    "contractAddress": "0x2f881af96415a452807baf6a23b73129d57f8d7a",
+    "contractAddress": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
     "registrationTx": "pending-registration",
-    "_note": "Run `npm run register-erc8004` with GUARDIAN_PRIVATE_KEY set to complete ERC-8004 on-chain registration. Registry contract pending finalized ERC-8004 spec deployment."
+    "_registryNote": "contractAddress is the ERC-8004 IdentityRegistry on Base Sepolia (source: github.com/erc-8004/erc-8004-contracts). tokenId and registrationTx will be populated after running: GUARDIAN_PRIVATE_KEY=0x... npm run register-erc8004",
+    "_agentRegistry": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e"
   },
   "supportedTools": [
     "foundry",
