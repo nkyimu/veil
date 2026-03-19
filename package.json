@@ -9,6 +9,8 @@
     "lint": "next lint",
     "agent": "npx tsx agent/server.ts",
     "agent:dev": "npx tsx --watch agent/server.ts",
+    "agent:launch": "bash scripts/start-guardian.sh",
+    "agent:launch:dev": "bash scripts/start-guardian.sh dev",
     "register-erc8004": "npx tsx scripts/register-erc8004.ts"
   },
   "dependencies": {

@@ -28,8 +28,9 @@
 - [ ] **Synthesis API registration** ← DO THIS FIRST ($17,917+ at risk)
   - Command: `workspace-baker/overnight-output/2026-03-18-synthesis-registration-command.md`
   - Takes 2 minutes. Save returned `sk-synth-...` apiKey.
-- [ ] **Venice API key** — sign up at `venice.ai/dashboard`, set `VENICE_API_KEY` in `.env`
-  - Unlocks $5,750 VVV (Venice Private Agents track). 5 min.
+- [x] **Venice API key** — stored in macOS Keychain (`security find-generic-password -s "VENICE_API_KEY"`)
+  - Auto-loaded by `bun run agent:launch` via `scripts/start-guardian.sh`
+  - Unlocks $5,750 VVV (Venice Private Agents track) ✅
 - [ ] **Push stuck commits** (`c8d2534` + `4d20e2f` + this checklist)
   - `git push origin main` from `nkyimu` GitHub identity (not `blu3dot`)
 - [ ] **Locus claim URL** — `https://beta.paywithlocus.com/register/claim/VY4vUXHVT4-wWHBG9MUFXALG7X-kHDxQlTs8Vq6t_7A`
@@ -45,11 +46,15 @@
 ```bash
 # 1. Copy env
 cp .env.example .env
-# Fill in: VENICE_API_KEY, GUARDIAN_ADDRESS, GUARDIAN_PRIVATE_KEY
+# Fill in: GUARDIAN_ADDRESS, GUARDIAN_PRIVATE_KEY
+# Note: VENICE_API_KEY loads automatically from macOS Keychain if set
+#   security add-generic-password -s "VENICE_API_KEY" -a "$USER" -w "<your-key>"
 
 # 2. Start frontend
 bun run dev  # http://localhost:3000
 
-# 3. Start Guardian agent
-bun run agent  # http://localhost:3001
+# 3. Start Guardian agent (auto-loads Venice key from Keychain)
+bun run agent:launch  # http://localhost:3001
+# or without Keychain auto-load:
+# bun run agent  # http://localhost:3001
 ```
