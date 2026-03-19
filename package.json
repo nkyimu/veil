@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "agent": "npx tsx agent/server.ts",
-    "agent:dev": "npx tsx --watch agent/server.ts"
+    "agent:dev": "npx tsx --watch agent/server.ts",
+    "register-erc8004": "npx tsx scripts/register-erc8004.ts"
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.2.10",
