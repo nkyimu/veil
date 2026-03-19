@@ -3,7 +3,11 @@
 import { useState } from "react";
 
 import { useAccount } from "wagmi";
-import { useSubmitQuery } from "@/hooks/useVeilVault";
+import {
+  useSubmitQuery,
+  useCredentialEvents,
+  useQueryAnsweredEvents,
+} from "@/hooks/useVeilVault";
 import { CREDENTIAL_TYPES, formatAddress, formatUSDA } from "@/lib/constants";
 
 export default function QueryBrowse() {
@@ -15,38 +19,8 @@ export default function QueryBrowse() {
   const [successTx, setSuccessTx] = useState<`0x${string}` | null>(null);
 
   const { submit } = useSubmitQuery();
-
-  // Mock credentials for demo (in production, read from events)
-  const mockCredentials = [
-    {
-      id: 1,
-      owner: "0x1234567890123456789012345678901234567890",
-      type: "Age",
-      price: 20000n,
-      queries: 47,
-    },
-    {
-      id: 2,
-      owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      type: "CreditRange",
-      price: 20000n,
-      queries: 32,
-    },
-    {
-      id: 3,
-      owner: "0xfedcbafedcbafedcbafedcbafedcbafedcbafed",
-      type: "Location",
-      price: 20000n,
-      queries: 18,
-    },
-    {
-      id: 4,
-      owner: "0x9876543210987654321098765432109876543210",
-      type: "Income",
-      price: 20000n,
-      queries: 5,
-    },
-  ];
+  const { credentials, loading: credsLoading } = useCredentialEvents();
+  const { answers, loading: answersLoading } = useQueryAnsweredEvents(5);
 
   const handleSubmitQuery = async () => {
     if (!address || !selectedDataOwner || selectedCredType < 0 || !question) {
@@ -75,7 +49,7 @@ export default function QueryBrowse() {
     }
   };
 
-  const selectedCred = mockCredentials.find(
+  const selectedCred = credentials.find(
     (c) => c.owner.toLowerCase() === selectedDataOwner.toLowerCase()
   );
 
@@ -101,35 +75,63 @@ export default function QueryBrowse() {
 
       {/* Available Credentials */}
       <section>
-        <h3 className="text-lg font-semibold mb-3">Available Credentials</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {mockCredentials.map((cred) => (
-            <div
-              key={cred.id}
-              onClick={() => setSelectedDataOwner(cred.owner)}
-              className={`rounded-lg p-4 cursor-pointer transition-colors ${
-                selectedDataOwner === cred.owner
-                  ? "bg-veil-900/50 border border-veil-600"
-                  : "bg-gray-900 border border-gray-800 hover:border-gray-700"
-              }`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className="font-semibold">{cred.type}</p>
-                  <p className="text-xs text-gray-500 font-mono mt-1">
-                    {formatAddress(cred.owner)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-veil-400 font-semibold">
-                    {formatUSDA(cred.price)}
-                  </p>
-                  <p className="text-xs text-gray-500">{cred.queries} queries</p>
+        <h3 className="text-lg font-semibold mb-3">
+          Available Credentials
+          {!credsLoading && (
+            <span className="ml-2 text-sm text-gray-500 font-normal">
+              ({credentials.length} on-chain)
+            </span>
+          )}
+        </h3>
+
+        {credsLoading ? (
+          <div className="text-gray-500 text-sm py-4">Loading on-chain credentials…</div>
+        ) : credentials.length === 0 ? (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 text-center">
+            <p className="text-gray-500 text-sm">No credentials stored yet.</p>
+            <p className="text-gray-600 text-xs mt-1">
+              Store a credential on the{" "}
+              <a href="/" className="text-veil-400 hover:underline">
+                home page
+              </a>{" "}
+              to get started.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {credentials.map((cred) => (
+              <div
+                key={`${cred.owner}-${cred.credType}`}
+                onClick={() => {
+                  setSelectedDataOwner(cred.owner);
+                  setSelectedCredType(cred.credType);
+                }}
+                className={`rounded-lg p-4 cursor-pointer transition-colors ${
+                  selectedDataOwner.toLowerCase() === cred.owner.toLowerCase()
+                    ? "bg-veil-900/50 border border-veil-600"
+                    : "bg-gray-900 border border-gray-800 hover:border-gray-700"
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="font-semibold">{cred.credTypeName}</p>
+                    <p className="text-xs text-gray-500 font-mono mt-1">
+                      {formatAddress(cred.owner)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-veil-400 font-semibold">
+                      {formatUSDA(cred.queryFee)}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {cred.queryCount.toString()} queries
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Query Form */}
@@ -137,7 +139,7 @@ export default function QueryBrowse() {
         <section className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-4">
           <h3 className="text-lg font-semibold">Ask a Question</h3>
 
-          {/* Credential Type */}
+          {/* Credential Type — auto-set from card selection, but user can override */}
           <div>
             <label className="text-sm text-gray-400 block mb-2">
               What credential type?
@@ -172,7 +174,7 @@ export default function QueryBrowse() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-400">Cost</span>
               <span className="text-veil-400 font-semibold">
-                {selectedCred ? formatUSDA(selectedCred.price) : "—"}
+                {selectedCred ? formatUSDA(selectedCred.queryFee) : "—"}
               </span>
             </div>
           </div>
@@ -222,57 +224,49 @@ export default function QueryBrowse() {
         </ol>
       </section>
 
-      {/* Recent Answers */}
+      {/* Recent Answers — live from chain */}
       <section>
         <h3 className="text-lg font-semibold mb-3">Recent Answers</h3>
-        <div className="flex flex-col gap-3">
-          {[
-            {
-              id: 47,
-              question: "Is user over 18?",
-              answer: true,
-              requester: "You",
-              time: "2 min ago",
-            },
-            {
-              id: 46,
-              question: "Credit score above 700?",
-              answer: true,
-              requester: "You",
-              time: "15 min ago",
-            },
-            {
-              id: 45,
-              question: "Located in US?",
-              answer: false,
-              requester: "You",
-              time: "1 hour ago",
-            },
-          ].map((q) => (
-            <div
-              key={q.id}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-4"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-gray-500">#{q.id}</span>
-                <span className="text-xs text-gray-500">{q.time}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium">{q.question}</p>
-                  <span className="text-xs text-gray-500">{q.requester}</span>
+        {answersLoading ? (
+          <div className="text-gray-500 text-sm py-4">Loading on-chain answers…</div>
+        ) : answers.length === 0 ? (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 text-center">
+            <p className="text-gray-500 text-sm">No answered queries yet.</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {answers.map((a) => (
+              <div
+                key={a.queryId.toString()}
+                className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-gray-500">#{a.queryId.toString()}</span>
+                  <span className="text-xs text-gray-500">
+                    {a.answeredAt > 0n
+                      ? new Date(Number(a.answeredAt) * 1000).toLocaleString()
+                      : ""}
+                  </span>
                 </div>
-                <span
-                  className={`text-sm font-semibold ${
-                    q.answer ? "text-green-400" : "text-red-400"
-                  }`}
-                >
-                  {q.answer ? "YES ✓" : "NO ✗"}
-                </span>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">{a.credTypeName} query</p>
+                    <span className="text-xs text-gray-500 font-mono">
+                      {formatAddress(a.dataOwner)}
+                    </span>
+                  </div>
+                  <span
+                    className={`text-sm font-semibold ${
+                      a.answer ? "text-green-400" : "text-red-400"
+                    }`}
+                  >
+                    {a.answer ? "YES ✓" : "NO ✗"}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

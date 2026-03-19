@@ -1,9 +1,10 @@
 "use client";
 
-import { useAccount, useWriteContract, useReadContract } from "wagmi";
+import { useAccount, useWriteContract, useReadContract, usePublicClient } from "wagmi";
 import { keccak256, encodePacked } from "viem";
+import { useState, useEffect } from "react";
 import { VEIL_VAULT_ABI } from "@/lib/veilvault-abi";
-import { VEIL_VAULT_ADDRESS } from "@/lib/constants";
+import { VEIL_VAULT_ADDRESS, CREDENTIAL_TYPES } from "@/lib/constants";
 
 export function useStoreCredential() {
   const { writeContractAsync } = useWriteContract();
@@ -113,4 +114,190 @@ export function useSubmitQuery() {
   };
 
   return { submit };
+}
+
+// ─── On-chain event hooks ───────────────────────────────────────────────────
+
+export type LiveCredential = {
+  owner: `0x${string}`;
+  credType: number;
+  credTypeName: string;
+  queryCount: bigint;
+  queryFee: bigint;
+};
+
+/**
+ * Fetches real CredentialStored events from Base Sepolia and enriches each
+ * unique (owner, credType) pair with query count + fee from contract reads.
+ */
+export function useCredentialEvents() {
+  const publicClient = usePublicClient();
+  const [credentials, setCredentials] = useState<LiveCredential[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!publicClient) return;
+
+    let cancelled = false;
+
+    async function fetchCredentials() {
+      try {
+        const logs = await publicClient!.getContractEvents({
+          address: VEIL_VAULT_ADDRESS,
+          abi: VEIL_VAULT_ABI,
+          eventName: "CredentialStored",
+          fromBlock: BigInt(0),
+          toBlock: "latest",
+        });
+
+        // Dedupe by owner+credType — last event wins (handles re-stores)
+        const seen = new Map<string, { owner: `0x${string}`; credType: number }>();
+        for (const log of logs) {
+          const args = log.args as { owner: `0x${string}`; credType: number };
+          const key = `${args.owner.toLowerCase()}-${args.credType}`;
+          seen.set(key, { owner: args.owner, credType: args.credType });
+        }
+
+        const unique = Array.from(seen.values());
+
+        // Read query counts and fees in parallel
+        const enriched = await Promise.all(
+          unique.map(async ({ owner, credType }) => {
+            try {
+              const [qCount, qFee] = await Promise.all([
+                publicClient!.readContract({
+                  address: VEIL_VAULT_ADDRESS,
+                  abi: VEIL_VAULT_ABI,
+                  functionName: "queryCount",
+                  args: [owner],
+                }),
+                publicClient!.readContract({
+                  address: VEIL_VAULT_ADDRESS,
+                  abi: VEIL_VAULT_ABI,
+                  functionName: "getQueryFee",
+                  args: [owner],
+                }),
+              ]);
+              return {
+                owner,
+                credType,
+                credTypeName: CREDENTIAL_TYPES[credType] ?? "Unknown",
+                queryCount: qCount as bigint,
+                queryFee: qFee as bigint,
+              };
+            } catch {
+              return {
+                owner,
+                credType,
+                credTypeName: CREDENTIAL_TYPES[credType] ?? "Unknown",
+                queryCount: 0n,
+                queryFee: 20000n,
+              };
+            }
+          })
+        );
+
+        if (!cancelled) setCredentials(enriched);
+      } catch (err) {
+        console.error("useCredentialEvents: fetch failed", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    fetchCredentials();
+    return () => { cancelled = true; };
+  }, [publicClient]);
+
+  return { credentials, loading };
+}
+
+export type LiveAnswer = {
+  queryId: bigint;
+  answer: boolean;
+  requester: `0x${string}`;
+  dataOwner: `0x${string}`;
+  credType: number;
+  credTypeName: string;
+  answeredAt: bigint;
+};
+
+/**
+ * Fetches recent QueryAnswered events and enriches with query details.
+ * Returns up to `limit` most-recent answered queries.
+ */
+export function useQueryAnsweredEvents(limit = 10) {
+  const publicClient = usePublicClient();
+  const [answers, setAnswers] = useState<LiveAnswer[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!publicClient) return;
+
+    let cancelled = false;
+
+    async function fetchAnswers() {
+      try {
+        const logs = await publicClient!.getContractEvents({
+          address: VEIL_VAULT_ADDRESS,
+          abi: VEIL_VAULT_ABI,
+          eventName: "QueryAnswered",
+          fromBlock: BigInt(0),
+          toBlock: "latest",
+        });
+
+        // Most recent first, capped at `limit`
+        const recent = logs.slice(-limit).reverse();
+
+        const enriched = await Promise.all(
+          recent.map(async (log) => {
+            const args = log.args as { queryId: bigint; answer: boolean };
+            try {
+              const query = await publicClient!.readContract({
+                address: VEIL_VAULT_ADDRESS,
+                abi: VEIL_VAULT_ABI,
+                functionName: "getQuery",
+                args: [args.queryId],
+              }) as {
+                requester: `0x${string}`;
+                dataOwner: `0x${string}`;
+                credType: number;
+                answeredAt: bigint;
+              };
+              return {
+                queryId: args.queryId,
+                answer: args.answer,
+                requester: query.requester,
+                dataOwner: query.dataOwner,
+                credType: query.credType,
+                credTypeName: CREDENTIAL_TYPES[query.credType] ?? "Unknown",
+                answeredAt: query.answeredAt,
+              };
+            } catch {
+              return {
+                queryId: args.queryId,
+                answer: args.answer,
+                requester: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+                dataOwner: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+                credType: 0,
+                credTypeName: "Unknown",
+                answeredAt: 0n,
+              };
+            }
+          })
+        );
+
+        if (!cancelled) setAnswers(enriched);
+      } catch (err) {
+        console.error("useQueryAnsweredEvents: fetch failed", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    fetchAnswers();
+    return () => { cancelled = true; };
+  }, [publicClient, limit]);
+
+  return { answers, loading };
 }
