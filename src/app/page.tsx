@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
-
 import { useAccount } from "wagmi";
-import { useStoreCredential, useGetCredential } from "@/hooks/useVeilVault";
+import { useStoreCredential, useGetCredential, useGetEarnings } from "@/hooks/useVeilVault";
 import { CREDENTIAL_TYPES, formatAddress } from "@/lib/constants";
 
+function StatPill({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="border border-gray-800 rounded-lg px-4 py-3">
+      <div className={`text-lg font-mono font-bold ${accent ? "text-veil-400" : "text-white"}`}>{value}</div>
+      <div className="text-xs font-mono text-gray-600 tracking-widest mt-0.5">{label}</div>
+    </div>
+  );
+}
 
 export default function CredentialManagement() {
   const { address, isConnected } = useAccount();
@@ -16,10 +23,8 @@ export default function CredentialManagement() {
   const [successTx, setSuccessTx] = useState<`0x${string}` | null>(null);
 
   const { store } = useStoreCredential();
-  const { credential, isLoading: checkingCredential } = useGetCredential(
-    address,
-    selectedType
-  );
+  const { credential, isLoading: checkingCredential } = useGetCredential(address, selectedType);
+  const { pending, queryCount } = useGetEarnings(address);
 
   const handleStore = async () => {
     if (!address || selectedType === null || !title || !content) {
@@ -29,7 +34,6 @@ export default function CredentialManagement() {
 
     setStoring(true);
     try {
-      // Generate a random salt for this credential
       const salt = Math.random().toString(36).substring(2, 15);
       const txHash = await store(selectedType, content, salt);
 
@@ -49,153 +53,169 @@ export default function CredentialManagement() {
 
   const isStored = credential?.active ?? false;
 
+  // Format pending earnings (bigint in USDC with 6 decimals)
+  const pendingFormatted = isConnected && pending > 0n
+    ? `$${(Number(pending) / 1_000_000).toFixed(2)}`
+    : "$0.00";
+
+  const queryCountFormatted = isConnected && queryCount > 0n
+    ? queryCount.toString()
+    : "—";
+
   return (
     <div className="flex flex-col gap-8">
+      {/* Stats Hero */}
+      <div>
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold tracking-tight">Your Data Vault</h2>
+          <p className="text-sm font-mono text-gray-600 tracking-widest mt-1">
+            STORE · PROTECT · EARN
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <StatPill label="CREDENTIALS" value={CREDENTIAL_TYPES.length.toString()} />
+          <StatPill label="QUERIES RECEIVED" value={queryCountFormatted} />
+          <StatPill label="PENDING EARNINGS" value={pendingFormatted} accent />
+        </div>
+      </div>
+
       {!isConnected && (
-        <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 text-yellow-200">
-          Connect your wallet to store credentials and start earning.
+        <div className="flex items-center gap-3 bg-amber-950/30 border border-amber-800/50 rounded-lg p-4">
+          <span className="text-amber-400 font-mono text-xs tracking-widest">WALLET.REQUIRED</span>
+          <span className="text-amber-200/70 text-sm">Connect your wallet to store credentials and start earning.</span>
         </div>
       )}
 
-      <section>
-        <h2 className="text-2xl font-bold mb-2">Store Your Credentials</h2>
-        <p className="text-gray-400 text-sm mb-6">
-          Your data is hashed client-side. Only the commitment (hash) is stored
-          on-chain. Only your agent sees the actual values.
-        </p>
-
-        {isConnected && address && (
+      {/* Store Form */}
+      {isConnected && address && (
+        <section>
+          <h3 className="text-sm font-mono text-gray-500 tracking-widest mb-3">STORE CREDENTIAL</h3>
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-4">
-            {/* Select Credential Type */}
             <div>
-              <label className="text-sm text-gray-400 block mb-2">
-                Credential Type
+              <label className="text-xs font-mono text-gray-500 tracking-widest block mb-2">
+                CREDENTIAL TYPE
               </label>
               <select
                 value={selectedType ?? ""}
                 onChange={(e) => setSelectedType(parseInt(e.target.value))}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:border-veil-600 focus:outline-none"
               >
                 <option value="">Select type...</option>
                 {CREDENTIAL_TYPES.map((type, idx) => (
-                  <option key={idx} value={idx}>
-                    {type}
-                  </option>
+                  <option key={idx} value={idx}>{type}</option>
                 ))}
               </select>
             </div>
 
-            {/* Current Status */}
             {selectedType !== null && (
-              <div className="bg-gray-800 rounded-lg p-3">
+              <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 flex items-center gap-2">
                 {checkingCredential ? (
-                  <p className="text-sm text-gray-400">Checking status...</p>
+                  <span className="text-xs font-mono text-gray-500 tracking-widest">CHECKING...</span>
                 ) : isStored ? (
-                  <div>
-                    <p className="text-sm font-semibold text-green-400">✓ Stored</p>
-                    <p className="text-xs text-gray-500 font-mono mt-1">
-                      {credential?.commitment?.slice(0, 10)}...
-                    </p>
-                  </div>
+                  <>
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span className="text-xs font-mono text-emerald-400 tracking-widest">STORED</span>
+                    <span className="text-xs font-mono text-gray-600 ml-2">
+                      {credential?.commitment?.slice(0, 14)}...
+                    </span>
+                  </>
                 ) : (
-                  <p className="text-sm text-gray-400">Not stored yet</p>
+                  <>
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-gray-600" />
+                    <span className="text-xs font-mono text-gray-500 tracking-widest">NOT STORED</span>
+                  </>
                 )}
               </div>
             )}
 
-            {/* Title */}
             <div>
-              <label className="text-sm text-gray-400 block mb-2">Title</label>
+              <label className="text-xs font-mono text-gray-500 tracking-widest block mb-2">TITLE</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g., My Age"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-600"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-600 focus:border-veil-600 focus:outline-none text-sm"
               />
             </div>
 
-            {/* Content */}
             <div>
-              <label className="text-sm text-gray-400 block mb-2">Value</label>
+              <label className="text-xs font-mono text-gray-500 tracking-widest block mb-2">VALUE</label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="e.g., 25"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-600 h-20"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-600 h-20 focus:border-veil-600 focus:outline-none text-sm font-mono"
               />
+              <p className="text-xs text-gray-700 mt-1 font-mono">
+                Hashed client-side. Only the commitment goes on-chain.
+              </p>
             </div>
 
-            {/* Store Button */}
             <button
               onClick={handleStore}
               disabled={storing || !selectedType || !title || !content}
-              className="w-full bg-veil-600 hover:bg-veil-700 disabled:bg-gray-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              className="w-full bg-veil-600 hover:bg-veil-700 disabled:bg-gray-800 disabled:text-gray-600 text-white px-6 py-3 rounded-lg font-mono text-sm tracking-widest transition-colors"
             >
-              {storing ? "Storing..." : "Encrypt & Store"}
+              {storing ? "ENCRYPTING..." : "ENCRYPT & STORE →"}
             </button>
 
             {successTx && (
-              <div className="bg-green-900/30 border border-green-700 rounded-lg p-3">
-                <p className="text-sm text-green-400">✓ Stored!</p>
+              <div className="flex items-center gap-3 bg-emerald-950/30 border border-emerald-800/50 rounded-lg p-3">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span className="text-xs font-mono text-emerald-400 tracking-widest">STORED ON-CHAIN</span>
                 <a
                   href={`https://sepolia.basescan.org/tx/${successTx}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-veil-400 hover:underline font-mono"
+                  className="text-xs font-mono text-veil-400 hover:underline ml-auto"
                 >
-                  {successTx.slice(0, 20)}...
+                  {successTx.slice(0, 20)}... ↗
                 </a>
               </div>
             )}
           </div>
-        )}
-      </section>
+        </section>
+      )}
 
-      {/* Your Stored Credentials */}
+      {/* Credential Registry */}
       <section>
-        <h3 className="text-lg font-semibold mb-3">Your Credentials</h3>
-        <div className="flex flex-col gap-3">
+        <h3 className="text-sm font-mono text-gray-500 tracking-widest mb-3">CREDENTIAL REGISTRY</h3>
+        <div className="flex flex-col gap-2">
           {CREDENTIAL_TYPES.map((credType, idx) => (
             <div
               key={idx}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-4 flex items-center justify-between"
+              className="bg-gray-900 border border-gray-800 rounded-lg px-4 py-3 flex items-center justify-between"
             >
               <div>
-                <h3 className="font-semibold">{credType}</h3>
-                <span className="text-xs text-gray-600">
-                  {idx === selectedType
-                    ? isStored
-                      ? `Commitment: ${credential?.commitment?.slice(0, 16)}...`
-                      : "Not stored"
-                    : "—"}
-                </span>
-              </div>
-              <div>
-                {idx === selectedType && isStored ? (
-                  <span className="text-xs bg-green-900/40 text-green-400 px-2 py-1 rounded">
-                    Stored
-                  </span>
-                ) : (
-                  <span className="text-xs text-gray-500">Not set</span>
+                <span className="font-semibold text-sm">{credType}</span>
+                {idx === selectedType && credential?.commitment && (
+                  <p className="text-xs font-mono text-gray-700 mt-0.5">
+                    {credential.commitment.slice(0, 18)}...
+                  </p>
                 )}
               </div>
+              {idx === selectedType && isStored ? (
+                <span className="text-xs font-mono bg-emerald-900/30 text-emerald-400 border border-emerald-800/50 px-2 py-1 rounded tracking-widest">
+                  STORED
+                </span>
+              ) : (
+                <span className="text-xs font-mono text-gray-700 tracking-widest">NOT SET</span>
+              )}
             </div>
           ))}
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-        <h3 className="text-veil-500 font-semibold mb-3">How It Works</h3>
-        <ol className="text-gray-400 text-sm space-y-2 list-decimal list-inside">
-          <li>Store your credentials — your agent encrypts them locally</li>
-          <li>
-            Hashed commitments are published on-chain (your data stays private)
-          </li>
-          <li>Services pay USDC to ask questions about your data</li>
-          <li>Your agent answers YES/NO with a ZK proof — never exposing raw data</li>
-          <li>You earn revenue from every query</li>
+      {/* Protocol Explainer */}
+      <section className="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+        <h3 className="text-xs font-mono text-veil-500 tracking-widest mb-4">PROTOCOL</h3>
+        <ol className="text-gray-500 text-sm space-y-2 font-mono">
+          <li><span className="text-gray-700">01</span> · Store credentials — hashed locally, committed on-chain</li>
+          <li><span className="text-gray-700">02</span> · Guardian monitors for incoming queries</li>
+          <li><span className="text-gray-700">03</span> · Services pay USDC to ask YES/NO questions</li>
+          <li><span className="text-gray-700">04</span> · Agent answers via Venice private inference — data never exposed</li>
+          <li><span className="text-gray-700">05</span> · Revenue accumulates on-chain, withdraw anytime</li>
         </ol>
       </section>
     </div>
