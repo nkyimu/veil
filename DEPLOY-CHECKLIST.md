@@ -22,7 +22,7 @@
 
 ## 🔧 In Progress / Optional Polish
 - [ ] Demo credential initialization (Amara's data — pre-seeded for judges)
-- [ ] Frontend design polish (Clinical Noir theme from DESIGN-DIRECTION.md)
+- [x] Frontend design polish — Clinical Noir applied: system status bar, pill nav active states, monospace data labels, stats hero row, STORED/NOT-SET badges ⚠️ push pending
 
 ## 🚫 Blocked on Amantu
 - [ ] **Synthesis API registration** ← DO THIS FIRST ($17,917+ at risk)
