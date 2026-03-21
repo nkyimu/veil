@@ -561,9 +561,21 @@ async function main() {
   console.log(`[Veil Guardian] Venice AI: ${VENICE_API_KEY ? "✓ configured (no-data-retention inference)" : "✗ not configured (local fallback)"}`);
   console.log(`[Veil Guardian] Venice Model: ${VENICE_MODEL}`);
 
-  // Demo: store a credential
-  const demoCredential = await storeCredential("age", "25");
-  console.log("[Veil Guardian] Demo credential stored:", demoCredential.type);
+  // Seed Amara persona credentials for demo / judge walkthrough.
+  // These populate the local credentialStore so Venice can reason about
+  // real values when answering queries — without exposing them externally.
+  const AMARA_CREDENTIALS: Array<[StoredCredential["type"], string]> = [
+    ["age",         "25"],           // age verification queries
+    ["creditRange", "700-750"],      // creditworthiness queries (good range)
+    ["location",    "Lagos, Nigeria"], // location-based eligibility
+    ["income",      "75000"],        // income threshold queries (USD/year)
+  ];
+
+  console.log("[Veil Guardian] Seeding Amara persona credentials...");
+  for (const [type, value] of AMARA_CREDENTIALS) {
+    const cred = await storeCredential(type, value);
+    console.log(`[Veil Guardian] ✓ ${cred.type}: commitment ${cred.commitment.slice(0, 10)}...`);
+  }
 
   // Check earnings
   const dataOwnerAddress = (process.env.GUARDIAN_ADDRESS as Address) || "0x0";
