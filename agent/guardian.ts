@@ -12,8 +12,71 @@
  */
 
 import { createPublicClient, createWalletClient, http, type Address, keccak256, encodePacked } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 import * as crypto from "crypto";
+
+// ---------------------------------------------------------------------------
+// Startup environment validation — fail loudly, not silently
+// ---------------------------------------------------------------------------
+
+function validateEnv(): void {
+  const warnings: string[] = [];
+  const errors: string[] = [];
+
+  // Derive GUARDIAN_ADDRESS from PRIVATE_KEY if not explicitly set.
+  // The .env ships PRIVATE_KEY but the code originally read GUARDIAN_ADDRESS —
+  // this discrepancy meant all on-chain writes silently sent to "0x0".
+  if (!process.env.GUARDIAN_ADDRESS && process.env.PRIVATE_KEY) {
+    try {
+      const account = privateKeyToAccount(process.env.PRIVATE_KEY as `0x${string}`);
+      process.env.GUARDIAN_ADDRESS = account.address;
+      console.log(`[Veil Guardian] GUARDIAN_ADDRESS derived from PRIVATE_KEY: ${account.address}`);
+    } catch {
+      errors.push("PRIVATE_KEY is set but invalid — could not derive GUARDIAN_ADDRESS");
+    }
+  } else if (!process.env.GUARDIAN_ADDRESS && !process.env.PRIVATE_KEY) {
+    errors.push(
+      "Neither GUARDIAN_ADDRESS nor PRIVATE_KEY is set — on-chain transactions will never fire"
+    );
+  }
+
+  // VENICE_API_KEY: required for the Private Agents prize track.
+  // Without it, every credential query silently returns answer=false.
+  if (!process.env.VENICE_API_KEY) {
+    const msg =
+      "VENICE_API_KEY is not set — Venice private inference will return answer=false on every query (~$31,900 VVV prize track at risk)";
+    if (process.env.GUARDIAN_DEMO_MODE === "true") {
+      warnings.push(msg + " (GUARDIAN_DEMO_MODE=true — continuing with fallback)");
+    } else {
+      errors.push(msg);
+    }
+  }
+
+  if (warnings.length > 0) {
+    console.warn("\n⚠️  [Veil Guardian] CONFIGURATION WARNINGS:");
+    for (const w of warnings) console.warn(`   → ${w}`);
+    console.warn("");
+  }
+
+  if (errors.length > 0) {
+    console.error("\n❌ [Veil Guardian] STARTUP FAILED — MISSING REQUIRED CONFIGURATION:");
+    for (const e of errors) console.error(`   → ${e}`);
+    console.error("\n   Fix: add missing values to .env (see .env.example)");
+    console.error("   Demo mode: set GUARDIAN_DEMO_MODE=true to skip Venice check and continue\n");
+    process.exit(1);
+  }
+}
+
+/**
+ * Returns a viem Account object backed by PRIVATE_KEY.
+ * Throws if the key is absent or invalid — call only after validateEnv().
+ */
+function getAccount() {
+  const pk = process.env.PRIVATE_KEY;
+  if (!pk) throw new Error("PRIVATE_KEY not set");
+  return privateKeyToAccount(pk as `0x${string}`);
+}
 
 // --- Venice AI (Private Cognition) ---
 // Venice provides no-data-retention inference — the Guardian's reasoning
@@ -240,6 +303,7 @@ async function storeCredential(
     }
 
     const walletClient = createWalletClient({
+      account: getAccount(),
       chain: base,
       transport: http(BASE_RPC),
     });
@@ -249,7 +313,8 @@ async function storeCredential(
       abi: VEIL_VAULT_ABI,
       functionName: "storeCredential",
       args: [typeIndex, commitment],
-      account: guardianAddress,
+      account: getAccount(),
+      chain: base,
     });
 
     console.log(`[Veil Guardian] On-chain commitment tx: ${hash}`);
@@ -305,6 +370,7 @@ async function answerQuery(queryId: bigint, requester: Address, credType: number
     }
 
     const walletClient = createWalletClient({
+      account: getAccount(),
       chain: base,
       transport: http(BASE_RPC),
     });
@@ -317,7 +383,8 @@ async function answerQuery(queryId: bigint, requester: Address, credType: number
       abi: VEIL_VAULT_ABI,
       functionName: "answerQuery",
       args: [queryId, answer, proof],
-      account: guardianAddress,
+      account: getAccount(),
+      chain: base,
     });
 
     console.log(`[Veil Guardian] Answer submitted for query ${queryId}: tx=${txHash}`);
@@ -469,6 +536,8 @@ async function checkEarnings(dataOwner: Address): Promise<{
 // --- Entry Point ---
 
 async function main() {
+  validateEnv(); // Fail loudly at startup, not silently at query time.
+
   console.log("[Veil Guardian] Agent starting...");
   console.log(`[Veil Guardian] Contract: ${VEIL_VAULT_ADDRESS}`);
   console.log(`[Veil Guardian] Chain: Base Sepolia`);
