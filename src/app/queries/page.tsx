@@ -9,6 +9,7 @@ import {
   useQueryAnsweredEvents,
 } from "@/hooks/useVeilVault";
 import { CREDENTIAL_TYPES, formatAddress, formatUSDA } from "@/lib/constants";
+import { FundWallet } from "@/components/FundWallet";
 
 export default function QueryBrowse() {
   const { address, isConnected } = useAccount();
@@ -150,6 +151,13 @@ export default function QueryBrowse() {
           </div>
         )}
       </section>
+
+      {/* Fund Wallet via Locus Checkout SDK */}
+      <FundWallet
+        onFunded={(txHash, amount) =>
+          console.log(`[locus] funded ${amount} USDC — tx ${txHash}`)
+        }
+      />
 
       {/* Query Form */}
       {selectedDataOwner && (

@@ -17,6 +17,7 @@
     "@rainbow-me/rainbowkit": "^2.2.10",
     "@tanstack/react-query": "^5.90.21",
     "@types/express": "^5.0.6",
+    "@withlocus/checkout-react": "^1.2.0",
     "express": "^5.2.1",
     "next": "15.5.14",
     "react": "^19.0.0",
