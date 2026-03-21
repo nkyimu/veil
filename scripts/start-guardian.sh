@@ -41,6 +41,33 @@ else
   echo "[start-guardian] ✓ Venice API key loaded from environment"
 fi
 
+# ─── Load Locus API key from Keychain ─────────────────────────────────────
+if [[ -z "${LOCUS_API_KEY:-}" ]]; then
+  LOCUS_KEY=$(security find-generic-password -a "veil-guardian" -s "locus-api-key" -w 2>/dev/null || true)
+  if [[ -n "$LOCUS_KEY" ]]; then
+    export LOCUS_API_KEY="$LOCUS_KEY"
+    echo "[start-guardian] ✓ Locus API key loaded from macOS Keychain"
+  else
+    echo "[start-guardian] ⚠ LOCUS_API_KEY not in Keychain or .env — payment verification in dev mode"
+    echo "[start-guardian]   To fix: security add-generic-password -a 'veil-guardian' -s 'locus-api-key' -w '<your-key>'"
+  fi
+else
+  echo "[start-guardian] ✓ Locus API key loaded from environment"
+fi
+
+# ─── Load Locus wallet from Keychain ──────────────────────────────────────
+if [[ -z "${LOCUS_WALLET_ADDRESS:-}" ]]; then
+  LOCUS_WALLET=$(security find-generic-password -a "veil-guardian" -s "locus-wallet-address" -w 2>/dev/null || true)
+  if [[ -n "$LOCUS_WALLET" ]]; then
+    export LOCUS_WALLET_ADDRESS="$LOCUS_WALLET"
+    echo "[start-guardian] ✓ Locus wallet address loaded from macOS Keychain: $LOCUS_WALLET_ADDRESS"
+  else
+    # Fallback to known registered wallet
+    export LOCUS_WALLET_ADDRESS="0x680ab339ea34d34a939080dfb3aef932b3892b4a"
+    echo "[start-guardian] ✓ Locus wallet address set to registered guardian wallet"
+  fi
+fi
+
 # ─── Validate Guardian address ────────────────────────────────────────────
 if [[ -z "${GUARDIAN_ADDRESS:-}" ]] && [[ -z "${GUARDIAN_PRIVATE_KEY:-}" ]]; then
   echo "[start-guardian] ⚠ Neither GUARDIAN_ADDRESS nor GUARDIAN_PRIVATE_KEY is set"

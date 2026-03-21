@@ -41,6 +41,22 @@ function validateEnv(): void {
     );
   }
 
+  // LOCUS_API_KEY: required for the x402+Locus payment track ($3,000 prize).
+  // Without it, payment verification runs in dev mode (accepts any txId).
+  if (!process.env.LOCUS_API_KEY) {
+    warnings.push(
+      "LOCUS_API_KEY is not set — Locus payment verification will run in dev mode (accepts any txId). " +
+      "Set LOCUS_API_KEY for the $3,000 Locus prize track."
+    );
+  }
+
+  if (!process.env.LOCUS_WALLET_ADDRESS) {
+    warnings.push(
+      "LOCUS_WALLET_ADDRESS is not set — guardian wallet defaults to empty string. " +
+      "Set LOCUS_WALLET_ADDRESS=0x680ab339ea34d34a939080dfb3aef932b3892b4a"
+    );
+  }
+
   // VENICE_API_KEY: required for the Private Agents prize track.
   // Without it, every credential query silently returns answer=false.
   if (!process.env.VENICE_API_KEY) {
