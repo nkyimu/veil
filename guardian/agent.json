@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "devspot-1.0",
+  "name": "VeilVault Guardian",
+  "description": "Autonomous AI guardian that monetizes private data without exposing it. Stores credentials on Base Sepolia via keccak256 commitment (raw values never on-chain), listens for QueryPosted events, validates x402 micropayment, routes credential to Venice private inference, returns YES/NO answer. No human required per query cycle.",
+  "version": "1.0.0",
+  "agentEntrypoint": "agent/guardian.ts",
+  "harness": "openclaw",
+  "model": "venice/llama-3.3-70b (private inference)",
+  "network": {
+    "chain": "base-sepolia",
+    "chainId": 84532,
+    "rpcEndpoint": "https://sepolia.base.org"
+  },
+  "deployedContracts": {
+    "VeilVault": "0x2f881af96415a452807baf6a23b73129d57f8d7a",
+    "ERC8004IdentityRegistry": "0x8004A818BFB912233c491871b3d84c89A494BD9e"
+  },
+  "operatorWallet": "0x2A32a443e07C7C72191FcC5c293324B2eFC02bc6",
+  "erc8004Identity": {
+    "registryContract": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+    "registryChain": "eip155:84532",
+    "tokenId": "pending-on-chain-registration",
+    "note": "Registration runs via `npm run register-erc8004`. tokenId populated post-tx."
+  },
+  "supportedTools": [
+    "viem",
+    "venice-private-inference",
+    "x402-payment-verification",
+    "locus-payment-routing",
+    "foundry",
+    "wagmi",
+    "ethers"
+  ],
+  "techStack": [
+    "TypeScript (strict)",
+    "Node.js",
+    "Solidity (via Foundry)",
+    "Next.js 15",
+    "Tailwind CSS",
+    "Base Sepolia",
+    "ERC-8004 (identity registry)",
+    "x402 (micropayment protocol)",
+    "Venice AI (private inference — no data retention)",
+    "Locus (USDC payment routing)",
+    "wagmi 3.5",
+    "viem 2.47",
+    "RainbowKit 2.2"
+  ],
+  "computeConstraints": {
+    "maxConcurrentQueries": 10,
+    "responseTimeMs": 5000,
+    "guardianPollIntervalMs": 3000,
+    "queryTimeoutMs": 30000,
+    "maxTokensPerInference": 100000
+  },
+  "taskCategories": [
+    "credential-vault",
+    "agent-identity",
+    "payment-gating",
+    "private-inference",
+    "autonomous-query-response"
+  ],
+  "autonomousCapabilities": {
+    "listensForOnchainEvents": true,
+    "autoRespondsToQueries": true,
+    "selfInitiatesRevenueWithdrawal": false,
+    "requiresHumanPerCycle": false,
+    "humanInterventionRequired": "Initial credential storage and manual withdrawal trigger only"
+  },
+  "guardrails": {
+    "paymentVerificationRequired": true,
+    "minimumQueryPaymentUsdc": "0.01",
+    "credentialNeverTransmitted": true,
+    "venueInferenceOnlyYesNo": true,
+    "noRawValueOnChain": true
+  },
+  "repoUrl": "https://github.com/blu3dot/veil",
+  "builtBy": {
+    "humanOperator": "Amantu",
+    "humanTouchpoints": 3,
+    "agentSwarm": [
+      { "agent": "Baker", "role": "Research strategy — hackathon intel, prize landscape, competitive analysis", "platform": "OpenClaw" },
+      { "agent": "Dorothy", "role": "Deep research — ERC-8004 analysis, submission copy, risk register", "platform": "OpenClaw" },
+      { "agent": "Adze", "role": "Developer — VeilVault.sol, guardian.ts, Next.js frontend", "platform": "OpenClaw" },
+      { "agent": "Banneker", "role": "Architecture QA — contract review, security audit, PR clearance", "platform": "OpenClaw" }
+    ]
+  },
+  "hackathon": {
+    "event": "synthesis-2026",
+    "deadline": "2026-03-22T23:59:00-08:00",
+    "tracks": [
+      "Protocol Labs — Agents With Receipts (ERC-8004)",
+      "Venice — Private Agents, Trusted Actions",
+      "Base — Agent Services on Base",
+      "Locus — Best Use of Locus"
+    ]
+  },
+  "agentLog": "./agent_log.json"
+}
