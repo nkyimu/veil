@@ -163,42 +163,37 @@ export function useCredentialEvents() {
 
         const unique = Array.from(seen.values());
 
-        // Read query counts and fees in parallel
-        const enriched = await Promise.all(
-          unique.map(async ({ owner, credType }) => {
-            try {
-              const [qCount, qFee] = await Promise.all([
-                publicClient!.readContract({
-                  address: VEIL_VAULT_ADDRESS,
-                  abi: VEIL_VAULT_ABI,
-                  functionName: "queryCount",
-                  args: [owner],
-                }),
-                publicClient!.readContract({
-                  address: VEIL_VAULT_ADDRESS,
-                  abi: VEIL_VAULT_ABI,
-                  functionName: "getQueryFee",
-                  args: [owner],
-                }),
-              ]);
-              return {
-                owner,
-                credType,
-                credTypeName: CREDENTIAL_TYPES[credType] ?? "Unknown",
-                queryCount: qCount as bigint,
-                queryFee: qFee as bigint,
-              };
-            } catch {
-              return {
-                owner,
-                credType,
-                credTypeName: CREDENTIAL_TYPES[credType] ?? "Unknown",
-                queryCount: 0n,
-                queryFee: 20000n,
-              };
-            }
-          })
-        );
+        // Batch all reads into a single multicall — N*2 RPCs → 1
+        const calls = unique.flatMap(({ owner }) => [
+          {
+            address: VEIL_VAULT_ADDRESS as `0x${string}`,
+            abi: VEIL_VAULT_ABI,
+            functionName: "queryCount" as const,
+            args: [owner] as [`0x${string}`],
+          },
+          {
+            address: VEIL_VAULT_ADDRESS as `0x${string}`,
+            abi: VEIL_VAULT_ABI,
+            functionName: "getQueryFee" as const,
+            args: [owner] as [`0x${string}`],
+          },
+        ]);
+
+        const mcResults = calls.length > 0
+          ? await publicClient!.multicall({ contracts: calls, allowFailure: true })
+          : [];
+
+        const enriched = unique.map(({ owner, credType }, i) => {
+          const qCountResult = mcResults[i * 2];
+          const qFeeResult = mcResults[i * 2 + 1];
+          return {
+            owner,
+            credType,
+            credTypeName: CREDENTIAL_TYPES[credType] ?? "Unknown",
+            queryCount: (qCountResult?.status === "success" ? qCountResult.result : 0n) as bigint,
+            queryFee: (qFeeResult?.status === "success" ? qFeeResult.result : 20000n) as bigint,
+          };
+        });
 
         if (!cancelled) {
           if (enriched.length === 0) {
@@ -277,43 +272,47 @@ export function useMyEarningsHistory(address: `0x${string}` | undefined, limit =
         // Most recent first, capped at limit
         const recent = created.slice(-limit).reverse();
 
-        const enriched = await Promise.all(
-          recent.map(async (log) => {
-            const args = log.args as {
-              queryId: bigint;
-              requester: `0x${string}`;
-              dataOwner: `0x${string}`;
-              credType: number;
-              payment: bigint;
-            };
-            try {
-              const query = await publicClient!.readContract({
-                address: VEIL_VAULT_ADDRESS,
-                abi: VEIL_VAULT_ABI,
-                functionName: "getQuery",
-                args: [args.queryId],
-              }) as {
-                requester: `0x${string}`;
-                dataOwner: `0x${string}`;
-                credType: number;
-                answeredAt: bigint;
-              };
-              // answeredAt == 0 means not yet answered
-              return {
-                queryId: args.queryId,
-                answer: query.answeredAt > 0n, // answered = true (answer details require QueryAnswered event lookup)
-                requester: args.requester,
-                dataOwner: args.dataOwner,
-                credType: args.credType,
-                credTypeName: CREDENTIAL_TYPES[args.credType] ?? "Unknown",
-                answeredAt: query.answeredAt,
-                payment: args.payment,
-              };
-            } catch {
-              return null;
-            }
-          })
-        );
+        // Batch all getQuery reads into a single multicall — N RPCs → 1
+        const recentEventArgs = recent.map((log) => log.args as {
+          queryId: bigint;
+          requester: `0x${string}`;
+          dataOwner: `0x${string}`;
+          credType: number;
+          payment: bigint;
+        });
+
+        const earningsCalls = recentEventArgs.map(({ queryId }) => ({
+          address: VEIL_VAULT_ADDRESS as `0x${string}`,
+          abi: VEIL_VAULT_ABI,
+          functionName: "getQuery" as const,
+          args: [queryId] as [bigint],
+        }));
+
+        const earningsResults = earningsCalls.length > 0
+          ? await publicClient!.multicall({ contracts: earningsCalls, allowFailure: true })
+          : [];
+
+        const enriched = recentEventArgs.map((args, i) => {
+          const res = earningsResults[i];
+          if (res?.status !== "success") return null;
+          const query = res.result as {
+            requester: `0x${string}`;
+            dataOwner: `0x${string}`;
+            credType: number;
+            answeredAt: bigint;
+          };
+          // answeredAt == 0 means not yet answered
+          return {
+            queryId: args.queryId,
+            answer: query.answeredAt > 0n, // answered = true (answer details require QueryAnswered event lookup)
+            requester: args.requester,
+            dataOwner: args.dataOwner,
+            credType: args.credType,
+            credTypeName: CREDENTIAL_TYPES[args.credType] ?? "Unknown",
+            answeredAt: query.answeredAt,
+            payment: args.payment,
+          };
+        });
 
         const valid = enriched.filter(Boolean) as EarningsEntry[];
         if (!cancelled) setHistory(valid);
@@ -355,43 +354,48 @@ export function useQueryAnsweredEvents(limit = 10) {
         // Most recent first, capped at `limit`
         const recent = logs.slice(-limit).reverse();
 
-        const enriched = await Promise.all(
-          recent.map(async (log) => {
-            const args = log.args as { queryId: bigint; answer: boolean };
-            try {
-              const query = await publicClient!.readContract({
-                address: VEIL_VAULT_ADDRESS,
-                abi: VEIL_VAULT_ABI,
-                functionName: "getQuery",
-                args: [args.queryId],
-              }) as {
-                requester: `0x${string}`;
-                dataOwner: `0x${string}`;
-                credType: number;
-                answeredAt: bigint;
-              };
-              return {
-                queryId: args.queryId,
-                answer: args.answer,
-                requester: query.requester,
-                dataOwner: query.dataOwner,
-                credType: query.credType,
-                credTypeName: CREDENTIAL_TYPES[query.credType] ?? "Unknown",
-                answeredAt: query.answeredAt,
-              };
-            } catch {
-              return {
-                queryId: args.queryId,
-                answer: args.answer,
-                requester: "0x0000000000000000000000000000000000000000" as `0x${string}`,
-                dataOwner: "0x0000000000000000000000000000000000000000" as `0x${string}`,
-                credType: 0,
-                credTypeName: "Unknown",
-                answeredAt: 0n,
-              };
-            }
-          })
-        );
+        // Batch all getQuery reads into a single multicall — N RPCs → 1
+        const recentArgs = recent.map((log) => log.args as { queryId: bigint; answer: boolean });
+        const queryCalls = recentArgs.map(({ queryId }) => ({
+          address: VEIL_VAULT_ADDRESS as `0x${string}`,
+          abi: VEIL_VAULT_ABI,
+          functionName: "getQuery" as const,
+          args: [queryId] as [bigint],
+        }));
+
+        const queryResults = queryCalls.length > 0
+          ? await publicClient!.multicall({ contracts: queryCalls, allowFailure: true })
+          : [];
+
+        const enriched = recentArgs.map(({ queryId, answer }, i) => {
+          const res = queryResults[i];
+          if (res?.status === "success") {
+            const query = res.result as {
+              requester: `0x${string}`;
+              dataOwner: `0x${string}`;
+              credType: number;
+              answeredAt: bigint;
+            };
+            return {
+              queryId,
+              answer,
+              requester: query.requester,
+              dataOwner: query.dataOwner,
+              credType: query.credType,
+              credTypeName: CREDENTIAL_TYPES[query.credType] ?? "Unknown",
+              answeredAt: query.answeredAt,
+            };
+          }
+          return {
+            queryId,
+            answer,
+            requester: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+            dataOwner: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+            credType: 0,
+            credTypeName: "Unknown",
+            answeredAt: 0n,
+          };
+        });
 
         if (!cancelled) {
           if (enriched.length === 0) {
