@@ -21,7 +21,7 @@
 - [x] Submission copy: Venice × OpenClaw "Private Agents" track narrative added
 
 ## 🔧 In Progress / Optional Polish
-- [ ] Demo credential initialization (Amara's data — pre-seeded for judges)
+- [x] Demo credential initialization (Amara's data — pre-seeded for judges) ✅ commit `9b3dcd6` ⚠️ push pending
 - [x] Frontend design polish — Clinical Noir applied: system status bar, pill nav active states, monospace data labels, stats hero row, STORED/NOT-SET badges ⚠️ push pending
 
 ## 🚫 Blocked on Amantu
