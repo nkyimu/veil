@@ -1,6 +1,6 @@
 # VeilVault — Demo Recording Guide
 *Competition-tuned for Synthesis Hackathon | March 22, 2026*
-*Updated framing: Adze 9:44 AM PST, March 22 (Dorothy patch 9:38 AM, Baker delta 9:35 AM)*
+*Updated framing: Adze 10:20 AM PST, March 22 (Baker 10:05 AM — Belle Epoch entered Venice + LtAC tracks)*
 
 ---
 
@@ -21,13 +21,14 @@
 - **DJZS Protocol** — x402 execution gating, 102 commits, no video
 
 ### Venice track:
+- **Belle Epoch** 🔴 **NEW PRIMARY THREAT (submitted 9:57 AM, 85 commits, VIDEO + stable Vercel URL)** — Two agents (Belle + client), Base + Celo, real USDC settlement, 90,000+ epochs cleared, 111 LLM queries. **Uses Venice for inference** (sells private reasoning as a service). *Different layer from VeilVault — complementary, not competing.* Their architecture: Venice is the LLM. VeilVault's architecture: Venice is the lock.
 - **Chorus** — FROST threshold signatures, real USDC, YouTube video submitted
 - **YieldsPilot** — Venice for private DeFi yield reasoning, video submitted
-- **AegisAgent** — Venice for forensic narrative analysis, video submitted
+- **AegisAgent** — Venice for forensic narrative analysis, video submitted (25 commits)
 
-**The race is now narrative quality, not just "get a video."** Mutual Aid Pool got theirs first at 9:01 AM. The frame: VeilVault is infrastructure. Mutual Aid Pool is an application. Agent Liveness Oracle is a different layer (liveness vs. credentials). These distinctions win judges.
+**The race is now narrative quality, not just "get a video."** Mutual Aid Pool got theirs first at 9:01 AM. Belle Epoch is live with video and real metrics. The frame: VeilVault is infrastructure. Mutual Aid Pool and Belle Epoch are applications. Agent Liveness Oracle is a different layer (liveness vs. credentials). These distinctions win judges.
 
-**How VeilVault is different:** Competitors use Venice *as an LLM* for reasoning or private computation. VeilVault uses Venice *as a key* — the credential cannot decrypt without Venice in the loop. That's structural, not a feature flag. **No other submission uses Venice this way.**
+**How VeilVault is different:** Every Venice competitor uses Venice *as an LLM* for reasoning, private trading, or forensic analysis. VeilVault uses Venice *as a cryptographic key* — the credential cannot decrypt without Venice in the loop. That's structural, not a feature flag. **No other submission uses Venice this way. Belle Epoch's architecture has Venice reasoning. VeilVault's architecture has Venice decrypting. These are different value propositions.**
 
 ---
 
@@ -75,7 +76,7 @@
 
 > "VeilVault is encrypted credential infrastructure for agents — the private key management layer. The guardian stores credentials on-chain, decrypts them using Venice's private inference, and charges per-query via x402. No .env file. No centralized key manager. No human in the credential path."
 
-> "Some projects use Venice for private trading decisions, some for forensic analysis. VeilVault uses Venice for something structurally different: the credential can't decrypt without Venice in the loop. It's not private computation — it's a cryptographic key dependency."
+> "Belle Epoch uses Venice as an LLM — private reasoning, inference as a service. AegisAgent uses it for forensic analysis. YieldsPilot for DeFi decisions. VeilVault uses Venice for something structurally different: the credential can't decrypt without Venice in the loop. Not inference. A cryptographic key dependency. If Venice goes down, the credential is locked. That's the architecture."
 
 ---
 
@@ -167,14 +168,17 @@
 
 ## Differentiators to Emphasize
 
-| | VeilVault | Mutual Aid Pool | Agent Liveness Oracle | Chorus | YieldsPilot / AegisAgent |
-|--|-----------|----------------|----------------------|--------|--------------------------|
-| Venice role | **Decrypt key (structural)** | Not used | Not used | Not used | Reasoning LLM |
-| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used |
-| Agent team | **4 named roles (log)** | Single Hermes agent | Single agent | Unknown | OpenClaw harness |
-| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ (heartbeat) | ❌ | ❌ |
-| Video | Recording today | ✅ (9:01 AM) | ❌ | ✅ | ✅ |
-| Abstraction | **Infrastructure layer** | Application layer | Infrastructure (liveness) | Application | Application |
+| | VeilVault | Mutual Aid Pool | Agent Liveness Oracle | Belle Epoch | Chorus | YieldsPilot / AegisAgent |
+|--|-----------|----------------|----------------------|-------------|--------|--------------------------|
+| Venice role | **Decrypt key (structural)** | Not used | Not used | Reasoning LLM (inference) | Not used | Reasoning LLM |
+| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used | Not used |
+| Agent team | **4 named roles (log)** | Single Hermes agent | Single agent | 2 agents (Belle + client) | Unknown | OpenClaw harness |
+| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ (heartbeat) | ❌ | ❌ | ❌ |
+| Video | Recording today | ✅ (9:01 AM) | ❌ | ✅ (Loom, 85 commits) | ✅ | ✅ |
+| Abstraction | **Infrastructure layer** | Application layer | Infrastructure (liveness) | Application (inference SaaS) | Application | Application |
+| Deploy URL | Recording → Vercel | Unknown | ✅ Vercel | ✅ belleepoch.xyz | Unknown | Unknown |
+
+**vs. Belle Epoch:** They sell private reasoning — Venice as an inference engine. VeilVault makes Venice a cryptographic key dependency. Different problem class: Belle Epoch = "private answers from AI". VeilVault = "credentials an AI can hold without a human". Judges who understand the stack will see this immediately. Use the phrase: "Belle Epoch uses Venice to think. VeilVault uses Venice to unlock."
 
 **vs. Mutual Aid Pool:** They're an application (community fund management). VeilVault is the infrastructure layer agents like theirs would use to store API keys. Different abstraction level — don't compete, just be clear VeilVault is upstream.
 
@@ -186,6 +190,7 @@ The multi-agent swarm story is yours alone on these tracks. Four named roles wit
 
 ---
 
-*Updated: Adze | March 22, 2026 9:44 AM PST | T-14.3h to deadline*
+*Updated: Adze | March 22, 2026 10:20 AM PST | T-13.6h to deadline*
 *Infra: Tunnel flooring-modification-bowl-requires.trycloudflare.com (dev only — use localhost for recording)*
-*Framing source: Dorothy 9:38 AM patch, Baker 9:35 AM competition delta*
+*Framing source: Dorothy 9:38 AM, Baker 9:35 AM delta, Baker 10:05 AM Belle Epoch alert*
+*Belle Epoch added: new primary Venice threat with video + stable URL. Differentiation explicit in Act 1 script.*
