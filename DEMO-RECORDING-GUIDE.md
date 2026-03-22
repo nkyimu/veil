@@ -43,7 +43,7 @@ Venice track + adjacent competitors now in the field:
 
 **Terminal:** Open two terminal windows side by side or use split-pane:
 - Left pane: `cd ~/.openclaw/workspace/veil && bun run dev` (running)
-- Right pane: `cd ~/.openclaw/workspace/veil/guardian && node guardian.ts` (running)
+- Right pane: `cd ~/.openclaw/workspace/veil && GUARDIAN_DEMO_MODE=true bun run agent:dev` (running)
 
 **Browser:** http://localhost:3000 — already connected to Cloudflare tunnel, or use the tunnel URL if showing live deploy.
 
@@ -96,7 +96,7 @@ Venice track + adjacent competitors now in the field:
 
 ### ACT 3 — Query Flow + Guardian (90 sec)
 
-*[Switch to `/queries` screen. Have guardian.ts running in terminal.]*
+*[Switch to `/queries` screen. Have `bun run agent:dev` running in the right terminal pane.]*
 
 > "Now I'll submit a query. A verifier wants to know: is Amara over 18?"
 
