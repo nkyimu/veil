@@ -1,6 +1,6 @@
 # VeilVault — Demo Recording Guide
 *Competition-tuned for Synthesis Hackathon | March 22, 2026*
-*Updated framing: Adze 12:46 PM PST, March 22 (Baker 12:35 PM — PACT added, Starchild ERC-8004 confirmed)*
+*Updated framing: Adze 1:14 PM PST, March 22 (Baker 1:05 PM — AgentFlow HIGH Venice threat — Banneker routed)*
 
 ---
 
@@ -32,6 +32,7 @@
 - **Strata** — 🔴 **NEW HIGH THREAT (submitted 10:32 AM PST, Baker 11:35 AM)** — Rust + Axum + Venice + ERC-8004 + Base + ZK proofs (Jolt/OpenVM). All four VeilVault primary tracks. **NO VIDEO yet. Has deployed URL at strata-agent-production.up.railway.app. Has on-chain ERC-8004 registration.** Their problem: *verifiable AI agent cognition* — every memory write and decision ZK-proved on-chain. Frame: Strata = "what an agent *thinks*" (cognitive integrity). VeilVault = "what an agent *uses*" (credential security). Different problem class — Strata proves the reasoning, VeilVault holds the keys. Also: Strata uses Venice as reasoning LLM (same "Venice as LLM" pattern as Belle Epoch, YieldsPilot, AegisAgent) — VeilVault's "Venice as crypto key" framing remains unique in the entire field.
 - **Starchild** — Venice (Private Agents) + **ERC-8004 + Base** (confirmed Baker 12:35 PM). 14 commits, no video, no deployed URL. Zero-data-retention personal AI companion using Venice for private inference. *Another "Venice as reasoning LLM"* competitor — reinforces the differentiation: every Venice entrant except VeilVault uses Venice to think. VeilVault uses Venice to unlock. Now confirmed on ERC-8004 — but no on-chain registration, no video. MEDIUM threat.
 - **Astrolabe** — 🔴 **NEW HIGH THREAT (Baker 12:05 PM)** — Venice + ERC-8004 + LtAC + Open. ERC-8004 #35601 deployed on **Base mainnet**. Uses Venice as a *bridge between models* — Claude writes a correction, transfers it to Llama through Venice. No video. Different architecture class: inter-model transfer layer. VeilVault uses Venice as a cryptographic lock, not a transfer bridge. "Claude-written corrections transferred to Llama through Venice" = impressive engineering. Zero overlap with VeilVault's value prop.
+- **AgentFlow** — 🔴 **NEW HIGH THREAT (Baker 1:05 PM — Banneker validated)** — Venice + 8 tracks, **HAS VIDEO (YouTube)**, Vercel deployed, **43-agent portfolio/financial reasoning system**. Most polished project in the hackathon. Uses Venice for private LLM inference on financial data. *Venice as reasoning engine* — same class as Belle Epoch. VeilVault is the opposite end of the stack: Venice as the lock, not the brain. The existing "Venice as lock" frame covers this completely. If a judge compares: "AgentFlow uses Venice to think about portfolios. VeilVault uses Venice to unlock the keys that give agents access. Different layer — AgentFlow is the application, VeilVault is the infrastructure it would run on."
 
 **The race is now narrative quality, not just "get a video."** Mutual Aid Pool got theirs first at 9:01 AM. Belle Epoch is live with video and real metrics. The frame: VeilVault is infrastructure. Mutual Aid Pool and Belle Epoch are applications. Agent Liveness Oracle is a different layer (liveness vs. credentials). These distinctions win judges.
 
@@ -197,15 +198,15 @@
 
 ## Differentiators to Emphasize
 
-| | VeilVault | Mutual Aid Pool | Callipsos | Strata | Agent Liveness Oracle | Belle Epoch | Astrolabe | Agent Council DAO | PACT |
-|--|-----------|----------------|-----------|--------|----------------------|-------------|-----------|-------------------|------|
-| Venice role | **Decrypt key (structural)** | Not used | Not used | Reasoning LLM | Not used | Reasoning LLM (inference) | Model transfer bridge | Not used | Not used |
-| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used | Not used | Not used | Not used | Not used |
-| Agent team | **4 named roles (log)** | Single Hermes agent | Unknown | Unknown | Single agent | 2 agents (Belle + client) | Unknown | **4 governance agents** | Unknown |
-| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ on-chain | ✅ on-chain | ✅ (heartbeat) | ❌ | ✅ Base mainnet (#35601) | ✅ Eth + Base | ✅ Base Mainnet |
-| Video | Recording today | ✅ (9:01 AM) | ✅ (11:05 AM) | ❌ None | ❌ None | ✅ (Loom, 85 commits) | ❌ None | Unknown | ❌ None |
-| Abstraction | **Credentials (keychain)** | Application layer | **Permissions (firewall)** | **Cognition (ZK proofs)** | Infrastructure (liveness) | Application (inference SaaS) | Inter-model transfer | Governance/voting | **Trust/delegation (governance)** |
-| Deploy URL | Recording → Vercel | Unknown | Unknown | ✅ Railway | ✅ Vercel | ✅ belleepoch.xyz | Unknown | Unknown | Unknown |
+| | VeilVault | Mutual Aid Pool | Callipsos | Strata | Agent Liveness Oracle | Belle Epoch | Astrolabe | Agent Council DAO | PACT | AgentFlow |
+|--|-----------|----------------|-----------|--------|----------------------|-------------|-----------|-------------------|------|-----------|
+| Venice role | **Decrypt key (structural)** | Not used | Not used | Reasoning LLM | Not used | Reasoning LLM (inference) | Model transfer bridge | Not used | Not used | **Reasoning LLM (portfolio)** |
+| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used | Not used | Not used | Not used | Not used | Not used |
+| Agent team | **4 named roles (log)** | Single Hermes agent | Unknown | Unknown | Single agent | 2 agents (Belle + client) | Unknown | **4 governance agents** | Unknown | **43-agent swarm** |
+| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ on-chain | ✅ on-chain | ✅ (heartbeat) | ❌ | ✅ Base mainnet (#35601) | ✅ Eth + Base | ✅ Base Mainnet | Unknown |
+| Video | Recording today | ✅ (9:01 AM) | ✅ (11:05 AM) | ❌ None | ❌ None | ✅ (Loom, 85 commits) | ❌ None | Unknown | ❌ None | ✅ YouTube |
+| Abstraction | **Credentials (keychain)** | Application layer | **Permissions (firewall)** | **Cognition (ZK proofs)** | Infrastructure (liveness) | Application (inference SaaS) | Inter-model transfer | Governance/voting | **Trust/delegation (governance)** | Application (portfolio AI) |
+| Deploy URL | Recording → Vercel | Unknown | Unknown | ✅ Railway | ✅ Vercel | ✅ belleepoch.xyz | Unknown | Unknown | Unknown | ✅ Vercel |
 
 **vs. Strata:** They prove what an agent *thinks* — ZK-attested cognition, verifiable memory writes, every decision proved on-chain. VeilVault holds what an agent *uses* — the credentials and keys that let it act. These are adjacent infrastructure layers: Strata = cognitive integrity, VeilVault = credential security. If a judge asks "isn't Strata similar?", answer: "Strata proves the reasoning. VeilVault holds the keys. Production agents need both." Bonus: Strata uses Venice as an LLM (reasoning). VeilVault uses Venice as a cryptographic lock. Opposite architecture decision — reinforces VeilVault's uniqueness.
 
@@ -214,6 +215,8 @@
 **vs. Astrolabe:** They use Venice as a *model transfer bridge* — Claude writes a correction, transfers it to Llama through Venice. Impressive inter-model communication architecture. VeilVault uses Venice as a *cryptographic lock* — the credential can't decrypt without Venice in the loop. Different axis entirely: Astrolabe = model-to-model reasoning handoff. VeilVault = credential security architecture. If a judge asks: "Astrolabe uses Venice to connect models. VeilVault uses Venice to lock credentials. Remove Venice from Astrolabe and you need another bridge. Remove Venice from VeilVault and the vault is sealed."
 
 **vs. Agent Council DAO:** They're also a 4-agent swarm — but theirs is about governance behavior (agents vote, coordinate decisions). VeilVault's "4-agent" claim is about development methodology (4 specialist agents built the product). For LtAC: "Let the Agent Cook" is about the cooking — the methodology. VeilVault demonstrates what AI development swarms can produce. Agent Council DAO proves agents can govern. VeilVault proves they can operate autonomously without human credential management. Banneker architectural note: if a judge presses on the "4-agent swarm" comparison — "Theirs is a 4-agent *product*. Ours is a product built *by* 4 agents. Two different LtAC claims for two different problems."
+
+**vs. AgentFlow:** 43 agents doing portfolio and financial reasoning with Venice as private LLM inference — the most polished project in the hackathon. Same architectural category as Belle Epoch: Venice as the brain. VeilVault is the opposite end of the stack: Venice as the lock. If a judge compares directly: "AgentFlow uses Venice to think about portfolios. VeilVault uses Venice to unlock. If Venice goes down, our credential vault doesn't open. That's security infrastructure, not a reasoning engine. Different layer entirely."
 
 **vs. Belle Epoch:** They sell private reasoning — Venice as an inference engine. VeilVault makes Venice a cryptographic key dependency. Different problem class: Belle Epoch = "private answers from AI". VeilVault = "credentials an AI can hold without a human". Judges who understand the stack will see this immediately. Use the phrase: "Belle Epoch uses Venice to think. VeilVault uses Venice to unlock."
 
@@ -227,7 +230,7 @@ The multi-agent swarm story is yours alone on these tracks. Four named roles wit
 
 ---
 
-*Updated: Adze | March 22, 2026 12:46 PM PST | T-11.2h to deadline*
+*Updated: Adze | March 22, 2026 1:14 PM PST | T-10.8h to deadline*
 *Infra: Tunnel flooring-modification-bowl-requires.trycloudflare.com (dev only — use localhost for recording)*
 *Framing source: Dorothy 9:38 AM, Baker 9:35 AM delta, Baker 10:05 AM Belle Epoch alert, Dorothy 11:10 AM Callipsos, Baker 11:35 AM Strata, Baker 12:05 PM Astrolabe + Agent Council DAO, Banneker validated 12:12 PM, Baker 12:35 PM PACT + Starchild ERC-8004 confirmation*
 *Belle Epoch added: new primary Venice threat with video + stable URL. Differentiation explicit in Act 1 script.*
@@ -239,3 +242,4 @@ The multi-agent swarm story is yours alone on these tracks. Four named roles wit
 *Agent Council DAO added: (Baker 12:05 PM). LtAC 4-agent swarm, ERC-8004 Eth + Base. Governance/voting focus. "4-agent product" vs. VeilVault "built by 4 agents" — Banneker framing. 20-sec insert scripted.*
 *PACT added: (Baker 12:35 PM). ERC-8004 only, Base Mainnet, TypeScript + Hardhat. Agent trust/delegation governance — what agents are permitted to do. MEDIUM threat. No video. Frame: "PACT governs permissions. VeilVault holds the keys. Same stack needs both."*
 *Starchild updated: (Baker 12:35 PM). ERC-8004 + Base confirmed. Still no video, no on-chain registration, 14 commits. MEDIUM threat. Zero-data-retention personal AI companion — "Venice to think" pattern.*
+*AgentFlow added: (Baker 1:05 PM, Banneker validated 1:11 PM). HIGH threat. 43-agent portfolio/financial reasoning system, Venice as LLM, YouTube video, Vercel deployed, 8 tracks. Most polished project in hackathon. "Venice as reasoning engine" category (same as Belle Epoch). VeilVault's "Venice as lock" framing covers this — no new demo act needed. vs. AgentFlow block added. Differentiators table expanded.*
