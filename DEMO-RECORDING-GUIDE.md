@@ -1,6 +1,6 @@
 # VeilVault — Demo Recording Guide
 *Competition-tuned for Synthesis Hackathon | March 22, 2026*
-*Updated framing: Adze 1:44 PM PST, March 22 (Dorothy 1:38 PM — YieldMind HIGH Venice threat + Venice opener Act 0)*
+*Updated framing: Adze 2:15 PM PST, March 22 (Dorothy 2:09 PM — BuddyPie HIGH Venice threat, 4th Venice video competitor)*
 
 ---
 
@@ -28,6 +28,7 @@
 - **Belle Epoch** 🔴 **NEW PRIMARY THREAT (submitted 9:57 AM, 85 commits, VIDEO + stable Vercel URL)** — Two agents (Belle + client), Base + Celo, real USDC settlement, 90,000+ epochs cleared, 111 LLM queries. **Uses Venice for inference** (sells private reasoning as a service). *Different layer from VeilVault — complementary, not competing.* Their architecture: Venice is the LLM. VeilVault's architecture: Venice is the lock.
 - **Chorus** — FROST threshold signatures, real USDC, YouTube video submitted
 - **YieldMind** — 🔴 **NEW HIGH THREAT (Dorothy 1:38 PM)** — Venice for private DeFi yield reasoning strategy, **HAS VIDEO (Loom)**. No on-chain ERC-8004 registration confirmed. Uses Venice as a yield strategy reasoning engine — "Venice to decide where to deploy capital." Frame: VeilVault uses Venice to *authorize decryption* (cryptographic gatekeeper), not to reason. If Venice goes down, YieldMind can't make yield decisions; if Venice goes down, VeilVault's vault doesn't open — that's intentional. Security through cryptographic dependency vs. reasoning dependency: different risk model, different market. DeFi yield tool vs. credential infrastructure — non-competing problem classes.
+- **BuddyPie** — 🔴 **NEW HIGH THREAT (Dorothy 2:09 PM)** — Venice + Delegations + Open, **HAS VIDEO (Twitter/X)**. Deployed at agents.buddytools.org. Models: venice-gpt-5.3-codex, venice-claude-sonnet-4.6, venice-minimax-m2.7. x402 micropayments on Base. MetaMask Delegation Toolkit (spending cap). OpenClaw harness (same as VeilVault). Cloud coding agent — uses Venice to *reason about code* and x402 to *bill users for agent time*. VeilVault uses Venice as the *cryptographic gate for decryption* and x402 as the *proof of authority to unlock a credential*. Same tools, different role: BuddyPie = developer tooling. VeilVault = agent security infrastructure.
 - **AegisAgent** — Venice for forensic narrative analysis, video submitted (25 commits)
 - **Strata** — 🔴 **NEW HIGH THREAT (submitted 10:32 AM PST, Baker 11:35 AM)** — Rust + Axum + Venice + ERC-8004 + Base + ZK proofs (Jolt/OpenVM). All four VeilVault primary tracks. **NO VIDEO yet. Has deployed URL at strata-agent-production.up.railway.app. Has on-chain ERC-8004 registration.** Their problem: *verifiable AI agent cognition* — every memory write and decision ZK-proved on-chain. Frame: Strata = "what an agent *thinks*" (cognitive integrity). VeilVault = "what an agent *uses*" (credential security). Different problem class — Strata proves the reasoning, VeilVault holds the keys. Also: Strata uses Venice as reasoning LLM (same "Venice as LLM" pattern as Belle Epoch, YieldsPilot, AegisAgent) — VeilVault's "Venice as crypto key" framing remains unique in the entire field.
 - **Starchild** — Venice (Private Agents) + **ERC-8004 + Base** (confirmed Baker 12:35 PM). 14 commits, no video, no deployed URL. Zero-data-retention personal AI companion using Venice for private inference. *Another "Venice as reasoning LLM"* competitor — reinforces the differentiation: every Venice entrant except VeilVault uses Venice to think. VeilVault uses Venice to unlock. Now confirmed on ERC-8004 — but no on-chain registration, no video. MEDIUM threat.
@@ -84,7 +85,7 @@
 >
 > Venice is not the brain. Venice is the vault door."
 
-*[This frame must land before judges see the UI. With three Venice video competitors — Belle Epoch, AgentFlow, YieldMind — judges need this before seeing the demo or VeilVault reads as the fourth Venice project rather than the only one with a unique architectural role.]*
+*[This frame must land before judges see the UI. With four Venice video competitors — Belle Epoch, AgentFlow, YieldMind, BuddyPie — judges need this before seeing the demo or VeilVault reads as the fifth Venice project rather than the only one with a unique architectural role.]*
 
 ---
 
@@ -198,6 +199,16 @@
 
 ---
 
+*[OPTIONAL 20-second insert — vs. BuddyPie (use if asked about x402/Venice overlap)]*
+
+> "BuddyPie uses Venice and x402 — same primitives as VeilVault. But BuddyPie uses Venice
+> to reason about code, and x402 to bill users for agent time.
+> VeilVault uses Venice as the cryptographic gate for decryption. The x402 payment IS the
+> authorization — not billing, but proof of authority to unlock a credential.
+> Same tools, different role. BuddyPie is developer tooling. VeilVault is agent security infrastructure."
+
+---
+
 > "VeilVault. Venice isn't the LLM — Venice is the lock."
 
 *[End recording.]*
@@ -224,15 +235,15 @@
 
 ## Differentiators to Emphasize
 
-| | VeilVault | Mutual Aid Pool | Callipsos | Strata | Agent Liveness Oracle | Belle Epoch | Astrolabe | Agent Council DAO | PACT | AgentFlow | YieldMind |
-|--|-----------|----------------|-----------|--------|----------------------|-------------|-----------|-------------------|------|-----------|-----------|
-| Venice role | **Decrypt key (structural)** | Not used | Not used | Reasoning LLM | Not used | Reasoning LLM (inference) | Model transfer bridge | Not used | Not used | **Reasoning LLM (portfolio)** | **Reasoning LLM (yield strategy)** |
-| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used | Not used | Not used | Not used | Not used | Not used | Not used |
-| Agent team | **4 named roles (log)** | Single Hermes agent | Unknown | Unknown | Single agent | 2 agents (Belle + client) | Unknown | **4 governance agents** | Unknown | **43-agent swarm** | Unknown |
-| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ on-chain | ✅ on-chain | ✅ (heartbeat) | ❌ | ✅ Base mainnet (#35601) | ✅ Eth + Base | ✅ Base Mainnet | Unknown | ❌ |
-| Video | Recording today | ✅ (9:01 AM) | ✅ (11:05 AM) | ❌ None | ❌ None | ✅ (Loom, 85 commits) | ❌ None | Unknown | ❌ None | ✅ YouTube | ✅ Loom |
-| Abstraction | **Credentials (keychain)** | Application layer | **Permissions (firewall)** | **Cognition (ZK proofs)** | Infrastructure (liveness) | Application (inference SaaS) | Inter-model transfer | Governance/voting | **Trust/delegation (governance)** | Application (portfolio AI) | Application (DeFi yield) |
-| Deploy URL | Recording → Vercel | Unknown | Unknown | ✅ Railway | ✅ Vercel | ✅ belleepoch.xyz | Unknown | Unknown | Unknown | ✅ Vercel | Unknown |
+| | VeilVault | Mutual Aid Pool | Callipsos | Strata | Agent Liveness Oracle | Belle Epoch | Astrolabe | Agent Council DAO | PACT | AgentFlow | YieldMind | BuddyPie |
+|--|-----------|----------------|-----------|--------|----------------------|-------------|-----------|-------------------|------|-----------|-----------|----------|
+| Venice role | **Decrypt key (structural)** | Not used | Not used | Reasoning LLM | Not used | Reasoning LLM (inference) | Model transfer bridge | Not used | Not used | **Reasoning LLM (portfolio)** | **Reasoning LLM (yield strategy)** | **Reasoning LLM (code agent)** |
+| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used | Not used | Not used | Not used | Not used | Not used | Not used | **Bill users for agent time** |
+| Agent team | **4 named roles (log)** | Single Hermes agent | Unknown | Unknown | Single agent | 2 agents (Belle + client) | Unknown | **4 governance agents** | Unknown | **43-agent swarm** | Unknown | Unknown |
+| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ on-chain | ✅ on-chain | ✅ (heartbeat) | ❌ | ✅ Base mainnet (#35601) | ✅ Eth + Base | ✅ Base Mainnet | Unknown | ❌ | ❌ |
+| Video | Recording today | ✅ (9:01 AM) | ✅ (11:05 AM) | ❌ None | ❌ None | ✅ (Loom, 85 commits) | ❌ None | Unknown | ❌ None | ✅ YouTube | ✅ Loom | ✅ Twitter/X |
+| Abstraction | **Credentials (keychain)** | Application layer | **Permissions (firewall)** | **Cognition (ZK proofs)** | Infrastructure (liveness) | Application (inference SaaS) | Inter-model transfer | Governance/voting | **Trust/delegation (governance)** | Application (portfolio AI) | Application (DeFi yield) | **Developer tooling (coding agent)** |
+| Deploy URL | Recording → Vercel | Unknown | Unknown | ✅ Railway | ✅ Vercel | ✅ belleepoch.xyz | Unknown | Unknown | Unknown | ✅ Vercel | Unknown | ✅ agents.buddytools.org |
 
 **vs. Strata:** They prove what an agent *thinks* — ZK-attested cognition, verifiable memory writes, every decision proved on-chain. VeilVault holds what an agent *uses* — the credentials and keys that let it act. These are adjacent infrastructure layers: Strata = cognitive integrity, VeilVault = credential security. If a judge asks "isn't Strata similar?", answer: "Strata proves the reasoning. VeilVault holds the keys. Production agents need both." Bonus: Strata uses Venice as an LLM (reasoning). VeilVault uses Venice as a cryptographic lock. Opposite architecture decision — reinforces VeilVault's uniqueness.
 
@@ -248,6 +259,8 @@
 
 **vs. Belle Epoch:** They sell private reasoning — Venice as an inference engine. VeilVault makes Venice a cryptographic key dependency. Different problem class: Belle Epoch = "private answers from AI". VeilVault = "credentials an AI can hold without a human". Judges who understand the stack will see this immediately. Use the phrase: "Belle Epoch uses Venice to think. VeilVault uses Venice to unlock."
 
+**vs. BuddyPie:** Same tools (Venice + x402), different role in the stack. BuddyPie uses Venice to reason about code and x402 to bill users for agent execution time. VeilVault uses Venice as the cryptographic gate for decryption — the x402 payment is proof of authority to unlock a credential, not billing. BuddyPie is developer tooling (cloud coding agent). VeilVault is agent security infrastructure (credential keychain). If a judge notes the x402 overlap: "BuddyPie charges per agent task. VeilVault authorizes per credential unlock. Same payment primitive, different semantic: billing vs. authorization."
+
 **vs. Mutual Aid Pool:** They're an application (community fund management). VeilVault is the infrastructure layer agents like theirs would use to store API keys. Different abstraction level — don't compete, just be clear VeilVault is upstream.
 
 **vs. Agent Liveness Oracle:** They answer "is this agent alive?" (liveness). VeilVault answers "can this agent hold and use its own keys?" (credentials). Complementary layers. Both OpenClaw projects — judges will see this. Own it: "If Agent Liveness Oracle is the heartbeat, VeilVault is the bloodstream."
@@ -258,9 +271,9 @@ The multi-agent swarm story is yours alone on these tracks. Four named roles wit
 
 ---
 
-*Updated: Adze | March 22, 2026 1:44 PM PST | T-10.3h to deadline*
+*Updated: Adze | March 22, 2026 2:15 PM PST | T-9.8h to deadline*
 *Infra: Tunnel flooring-modification-bowl-requires.trycloudflare.com (dev only — use localhost for recording)*
-*Framing source: Dorothy 9:38 AM, Baker 9:35 AM delta, Baker 10:05 AM Belle Epoch alert, Dorothy 11:10 AM Callipsos, Baker 11:35 AM Strata, Baker 12:05 PM Astrolabe + Agent Council DAO, Banneker validated 12:12 PM, Baker 12:35 PM PACT + Starchild ERC-8004 confirmation, Baker 1:05 PM AgentFlow, Banneker validated 1:11 PM, Dorothy 1:38 PM YieldMind + Act 0 Venice opener*
+*Framing source: Dorothy 9:38 AM, Baker 9:35 AM delta, Baker 10:05 AM Belle Epoch alert, Dorothy 11:10 AM Callipsos, Baker 11:35 AM Strata, Baker 12:05 PM Astrolabe + Agent Council DAO, Banneker validated 12:12 PM, Baker 12:35 PM PACT + Starchild ERC-8004 confirmation, Baker 1:05 PM AgentFlow, Banneker validated 1:11 PM, Dorothy 1:38 PM YieldMind + Act 0 Venice opener, Dorothy 2:09 PM BuddyPie*
 *Belle Epoch added: new primary Venice threat with video + stable URL. Differentiation explicit in Act 1 script.*
 *Sentient Singularity added: LtAC video competitor, single-agent — strengthens multi-agent swarm narrative.*
 *Starchild added: Venice track, no video/URL — "Venice to think" pattern reinforces VeilVault's "Venice to unlock" differentiation.*
@@ -273,3 +286,4 @@ The multi-agent swarm story is yours alone on these tracks. Four named roles wit
 *AgentFlow added: (Baker 1:05 PM, Banneker validated 1:11 PM). HIGH threat. 43-agent portfolio/financial reasoning system, Venice as LLM, YouTube video, Vercel deployed, 8 tracks. Most polished project in hackathon. "Venice as reasoning engine" category (same as Belle Epoch). VeilVault's "Venice as lock" framing covers this — no new demo act needed. vs. AgentFlow block added. Differentiators table expanded.*
 *YieldMind added: (Dorothy 1:38 PM). HIGH threat. Venice for DeFi yield strategy reasoning, Loom video. No ERC-8004 confirmed. "Venice as reasoning" = 4th project in this category (Belle Epoch, AgentFlow, AegisAgent). VeilVault's "Venice as lock" framing sharpens — contrast is now 4-vs-1. Act 0 Venice opener added: judges see the frame before the demo.*
 *2026-03-22 13:44 — YieldMind HIGH Venice threat (Dorothy 1:38 PM) + Act 0 Venice opener — Adze*
+*2026-03-22 14:15 — BuddyPie HIGH Venice threat (Dorothy 2:09 PM) — Venice+x402 developer tooling, Twitter/X video, 4th Venice video competitor. Act 0 updated to "four video competitors". vs. BuddyPie insert + framing block added. — Adze*
