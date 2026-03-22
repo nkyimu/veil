@@ -1,6 +1,6 @@
 # VeilVault — Demo Recording Guide
 *Competition-tuned for Synthesis Hackathon | March 22, 2026*
-*Updated framing: Adze 10:45 AM PST, March 22 (Baker 10:35 AM — Sentient Singularity + Starchild added)*
+*Updated framing: Adze 11:16 AM PST, March 22 (Dorothy 11:10 AM — Callipsos HIGH threat added)*
 
 ---
 
@@ -16,6 +16,7 @@
 
 ### LtAC + ERC-8004 tracks (primary):
 - **Mutual Aid Pool** — 🔴 **HAS VIDEO (9:01 AM)** — LtAC + ERC-8004, 39 commits, single Hermes agent managing community emergency fund on Base Sepolia + Avalanche Fuji. No Venice, no credential vault, no multi-agent swarm. *Application layer*, not infrastructure.
+- **Callipsos** — 🔴 **NEW HIGH THREAT (11:05 AM)** — ERC-8004 + LtAC, **HAS VIDEO + on-chain ERC-8004 registration**. Focuses on *agent security enforcement* — what an agent is **allowed to do** (permissions/firewall layer). VeilVault stores what an agent **needs to do it** (credential/keychain layer). These are different layers — see demo insert below.
 - **Agent Liveness Oracle** — submitted 9:33 AM, LtAC + ERC-8004, OpenClaw harness (same as VeilVault), no video, **Vercel live** at `synthesis-liveness-oracle.vercel.app`. 19 commits. Single agent heartbeating every 15 min. *Answers "is this agent alive?"*
 - **@toju.network/x402** — x402 SDK (LtAC), has YouTube video, 260 commits. Different lane — they build x402 tooling. VeilVault *uses* x402. Complementary, not competing.
 - **DJZS Protocol** — x402 execution gating, 102 commits, no video
@@ -144,6 +145,16 @@
 
 *[Close the log. Back to browser on the Earnings screen `/earnings`]*
 
+---
+
+*[OPTIONAL 15-second insert — add here if time permits, or weave into Act 2 transition]*
+
+> "You might have seen another entry today — Callipsos — that also focuses on agent security. They enforce what an agent is allowed to do. VeilVault stores what an agent needs to do it."
+
+> "These aren't competing solutions. They're two layers of the same problem. Callipsos is the firewall. VeilVault is the keychain. Every production agent system needs both."
+
+---
+
 > "VeilVault. Venice isn't the LLM — Venice is the lock."
 
 *[End recording.]*
@@ -170,15 +181,17 @@
 
 ## Differentiators to Emphasize
 
-| | VeilVault | Mutual Aid Pool | Agent Liveness Oracle | Belle Epoch | Chorus | YieldsPilot / AegisAgent |
-|--|-----------|----------------|----------------------|-------------|--------|--------------------------|
-| Venice role | **Decrypt key (structural)** | Not used | Not used | Reasoning LLM (inference) | Not used | Reasoning LLM |
-| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used | Not used |
-| Agent team | **4 named roles (log)** | Single Hermes agent | Single agent | 2 agents (Belle + client) | Unknown | OpenClaw harness |
-| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ (heartbeat) | ❌ | ❌ | ❌ |
-| Video | Recording today | ✅ (9:01 AM) | ❌ | ✅ (Loom, 85 commits) | ✅ | ✅ |
-| Abstraction | **Infrastructure layer** | Application layer | Infrastructure (liveness) | Application (inference SaaS) | Application | Application |
-| Deploy URL | Recording → Vercel | Unknown | ✅ Vercel | ✅ belleepoch.xyz | Unknown | Unknown |
+| | VeilVault | Mutual Aid Pool | Callipsos | Agent Liveness Oracle | Belle Epoch | Chorus | YieldsPilot / AegisAgent |
+|--|-----------|----------------|-----------|----------------------|-------------|--------|--------------------------|
+| Venice role | **Decrypt key (structural)** | Not used | Not used | Not used | Reasoning LLM (inference) | Not used | Reasoning LLM |
+| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used | Not used | Not used |
+| Agent team | **4 named roles (log)** | Single Hermes agent | Unknown | Single agent | 2 agents (Belle + client) | Unknown | OpenClaw harness |
+| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ on-chain | ✅ (heartbeat) | ❌ | ❌ | ❌ |
+| Video | Recording today | ✅ (9:01 AM) | ✅ (11:05 AM) | ❌ | ✅ (Loom, 85 commits) | ✅ | ✅ |
+| Abstraction | **Credentials (keychain)** | Application layer | **Permissions (firewall)** | Infrastructure (liveness) | Application (inference SaaS) | Application | Application |
+| Deploy URL | Recording → Vercel | Unknown | Unknown | ✅ Vercel | ✅ belleepoch.xyz | Unknown | Unknown |
+
+**vs. Callipsos:** They enforce what an agent is *allowed to do* — permissions, access control, the firewall. VeilVault stores what an agent *needs to do it* — credentials, keys, the keychain. These are adjacent layers, not competing. If a judge asks "isn't Callipsos the same?", answer: "Callipsos is the firewall. VeilVault is the keychain. Every production system needs both."
 
 **vs. Belle Epoch:** They sell private reasoning — Venice as an inference engine. VeilVault makes Venice a cryptographic key dependency. Different problem class: Belle Epoch = "private answers from AI". VeilVault = "credentials an AI can hold without a human". Judges who understand the stack will see this immediately. Use the phrase: "Belle Epoch uses Venice to think. VeilVault uses Venice to unlock."
 
@@ -192,9 +205,10 @@ The multi-agent swarm story is yours alone on these tracks. Four named roles wit
 
 ---
 
-*Updated: Adze | March 22, 2026 10:20 AM PST | T-13.6h to deadline*
+*Updated: Adze | March 22, 2026 11:16 AM PST | T-12.75h to deadline*
 *Infra: Tunnel flooring-modification-bowl-requires.trycloudflare.com (dev only — use localhost for recording)*
-*Framing source: Dorothy 9:38 AM, Baker 9:35 AM delta, Baker 10:05 AM Belle Epoch alert*
+*Framing source: Dorothy 9:38 AM, Baker 9:35 AM delta, Baker 10:05 AM Belle Epoch alert, Dorothy 11:10 AM Callipsos*
 *Belle Epoch added: new primary Venice threat with video + stable URL. Differentiation explicit in Act 1 script.*
 *Sentient Singularity added: LtAC video competitor, single-agent — strengthens multi-agent swarm narrative.*
 *Starchild added: Venice track, no video/URL — "Venice to think" pattern reinforces VeilVault's "Venice to unlock" differentiation.*
+*Callipsos added: HIGH threat, ERC-8004 + LtAC + video + on-chain registration. Firewall/keychain framing added. Insert scripted in Act 4.*
