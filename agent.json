@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "name": "VeilVault Guardian",
-  "description": "An autonomous AI guardian that monetizes your private data without exposing it. Stores credentials on Base, listens for incoming queries, generates ZK proofs, and auto-routes USDC earnings. No human required per query cycle. VeilVault pairs ERC-8004 agent identity with encrypted on-chain credential storage — agents earn trust through verifiable identity, then use that identity to gate access to their operational secrets.",
+  "description": "An autonomous AI guardian that monetizes your private data without exposing it. Stores credentials on Base, listens for incoming queries, generates ZK proofs, and auto-routes USDC earnings. No human required per query cycle. VeilVault pairs ERC-8004 agent identity with encrypted on-chain credential storage \u2014 agents earn trust through verifiable identity, then use that identity to gate access to their operational secrets.",
   "version": "1.0.0",
   "hackathon": "synthesis-2026",
   "deployedContract": "0x2f881af96415a452807baf6a23b73129d57f8d7a",
@@ -18,11 +18,11 @@
       {
         "registry": "IdentityRegistry",
         "address": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
-        "purpose": "Guardian agent identity registration — establishes verifiable on-chain agent persona",
+        "purpose": "Guardian agent identity registration \u2014 establishes verifiable on-chain agent persona",
         "interaction": "registerAgent() on startup, used to gate credential storage access"
       }
     ],
-    "erc8004Role": "VeilVault is the credential layer above identity infrastructure — trusted agents (verified via IdentityRegistry) use that identity to gate access to their operational secrets stored in VeilVault"
+    "erc8004Role": "VeilVault is the credential layer above identity infrastructure \u2014 trusted agents (verified via IdentityRegistry) use that identity to gate access to their operational secrets stored in VeilVault"
   },
   "supportedTools": [
     "foundry",
@@ -70,14 +70,30 @@
   "builtBy": {
     "humanOperator": "Amantu",
     "agentSwarm": [
-      { "agent": "Baker", "role": "Research & strategy planner", "platform": "OpenClaw" },
-      { "agent": "Dorothy", "role": "Deep research & synthesis", "platform": "OpenClaw" },
-      { "agent": "Adze", "role": "Developer (contracts + frontend)", "platform": "OpenClaw" },
-      { "agent": "Banneker", "role": "Architecture review & QA", "platform": "OpenClaw" }
+      {
+        "agent": "Baker",
+        "role": "Research & strategy planner",
+        "platform": "OpenClaw"
+      },
+      {
+        "agent": "Dorothy",
+        "role": "Deep research & synthesis",
+        "platform": "OpenClaw"
+      },
+      {
+        "agent": "Adze",
+        "role": "Developer (contracts + frontend)",
+        "platform": "OpenClaw"
+      },
+      {
+        "agent": "Banneker",
+        "role": "Architecture review & QA",
+        "platform": "OpenClaw"
+      }
     ]
   },
-  "repoUrl": "https://github.com/blu3dot/veil",
+  "repoUrl": "https://github.com/nkyimu/veil",
   "demoUrl": "https://civic-cgi-funk-axis.trycloudflare.com",
   "deployedURL": "https://civic-cgi-funk-axis.trycloudflare.com",
-  "_deployNote": "Cloudflare Quick Tunnel — active while Cerebro (Amantu's Mac) is running. Hosted from local standalone Next.js build. Upgrade to Railway/Cloudflare Pages with git push after PAT rotation."
+  "_deployNote": "Cloudflare Quick Tunnel \u2014 active while Cerebro (Amantu's Mac) is running. Hosted from local standalone Next.js build. Upgrade to Railway/Cloudflare Pages with git push after PAT rotation."
 }
