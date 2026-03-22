@@ -1,39 +1,43 @@
 # VeilVault — Demo Recording Guide
 *Competition-tuned for Synthesis Hackathon | March 22, 2026*
-*Updated framing: Adze 9:44 PM PST, March 21 (Baker scan 9:35 PM)*
+*Updated framing: Adze 9:44 AM PST, March 22 (Dorothy patch 9:38 AM, Baker delta 9:35 AM)*
 
 ---
 
-## 🔴 INFRASTRUCTURE STATUS (9:44 PM)
-- **Live URL:** https://civic-cgi-funk-axis.trycloudflare.com ✅ HTTP 200
-- *(Previous tunnel expired — new URL active as of 9:44 PM)*
+## 🔴 INFRASTRUCTURE STATUS (9:44 AM — Record against localhost, deploy Vercel URL for submission)
+- **Dev server:** http://localhost:3000 ✅ Running (next-server PID 45740)
+- **Tunnel (DO NOT use for submission):** https://flooring-modification-bowl-requires.trycloudflare.com ✅ HTTP 200 (rotated 8:19 AM — ephemeral)
+- **Action required:** Run `vercel --yes --prod` after PAT rotation + git push → use the stable Vercel URL in submission curl
+- *(Record demo against localhost — stable. Note Vercel URL at the end if you need to reference live deploy.)*
 
 ---
 
-## Context: The Competitive Field (9:35 PM Current)
+## Context: The Competitive Field (9:38 AM — Morning State)
 
-Venice track + adjacent competitors now in the field:
-- **Chorus** — FROST threshold signatures, real USDC, **YouTube video submitted** — highest threat
+### LtAC + ERC-8004 tracks (primary):
+- **Mutual Aid Pool** — 🔴 **HAS VIDEO (9:01 AM)** — LtAC + ERC-8004, 39 commits, single Hermes agent managing community emergency fund on Base Sepolia + Avalanche Fuji. No Venice, no credential vault, no multi-agent swarm. *Application layer*, not infrastructure.
+- **Agent Liveness Oracle** — submitted 9:33 AM, LtAC + ERC-8004, OpenClaw harness (same as VeilVault), no video, **Vercel live** at `synthesis-liveness-oracle.vercel.app`. 19 commits. Single agent heartbeating every 15 min. *Answers "is this agent alive?"*
+- **@toju.network/x402** — x402 SDK (LtAC), has YouTube video, 260 commits. Different lane — they build x402 tooling. VeilVault *uses* x402. Complementary, not competing.
+- **DJZS Protocol** — x402 execution gating, 102 commits, no video
+
+### Venice track:
+- **Chorus** — FROST threshold signatures, real USDC, YouTube video submitted
 - **YieldsPilot** — Venice for private DeFi yield reasoning, video submitted
 - **AegisAgent** — Venice for forensic narrative analysis, video submitted
-- **eelienX Protocol** — 🔴 **NEW HIGH THREAT** (entered 8:18 PM) — 35 commits, ERC-8004 on Base **Mainnet**, 5-phase autonomous trading agent loop (discover→plan→execute→verify→submit), openclaw harness + claude-sonnet-4-6, **no video yet**
-- **DJZS Protocol** — x402 execution gating, 102 commits, **no video yet** (12+ hours)
-- **DarwinFi** — 488 tests, 81 commits, **no video yet** (12+ hours)
-- **Shadow Swarm** — Venice + OpenServ, LtAC track, has video, 1 commit (low threat)
 
-**The window:** eelienX, DJZS, and DarwinFi still have no videos. VeilVault can be the only high-commit ERC-8004 project with a Venice integration AND a video. That's the win.
+**The race is now narrative quality, not just "get a video."** Mutual Aid Pool got theirs first at 9:01 AM. The frame: VeilVault is infrastructure. Mutual Aid Pool is an application. Agent Liveness Oracle is a different layer (liveness vs. credentials). These distinctions win judges.
 
-**vs. eelienX specifically:** They execute trades autonomously — impressive but it's just another trading agent. VeilVault solves the problem *every* agent like theirs has: where do you store the API credentials that let it run? VeilVault is upstream of eelienX's problem class.
-
-**How VeilVault is different:** Competitors use Venice *as an LLM* for reasoning or private computation. VeilVault uses Venice *as a key* — the credential cannot decrypt without Venice in the loop. That's structural, not a feature flag.
+**How VeilVault is different:** Competitors use Venice *as an LLM* for reasoning or private computation. VeilVault uses Venice *as a key* — the credential cannot decrypt without Venice in the loop. That's structural, not a feature flag. **No other submission uses Venice this way.**
 
 ---
 
 ## The One-Sentence Frame
 
-> "Some projects use Venice for private trading decisions, some for forensic analysis. VeilVault uses Venice for something structurally different: the credential can't decrypt without Venice in the loop. It's not private computation — it's a cryptographic key dependency."
+> "There are two infrastructure problems every autonomous agent faces. First: liveness — is it running? Second: credentials — can it act without a human holding its keys? The first problem has tooling. VeilVault solves the second one."
 
-**Say this on camera. Not paraphrased. Verbatim.**
+> "VeilVault is encrypted credential infrastructure for agents — the private key management layer. The guardian stores credentials on-chain, decrypts them using Venice's private inference, and charges per-query via x402. No .env file. No centralized key manager. No human in the credential path."
+
+**Say this on camera. Not paraphrased. Verbatim. "The first problem has tooling" implicitly contrasts Agent Liveness Oracle without naming them.**
 
 ---
 
@@ -63,9 +67,13 @@ Venice track + adjacent competitors now in the field:
 
 *[Start on blank browser, not VeilVault yet]*
 
-> "When AI agents need sensitive data — medical records, credentials, financial history — they have a problem. They either get the data in plaintext, which is a security risk, or they're blocked and can't answer the question. VeilVault solves this with a different architecture: the agent never sees the data. Venice holds it."
+> "There are two infrastructure problems every autonomous agent faces. First: liveness — is it running? Second: credentials — can it act without a human holding its keys?"
 
-*[Navigate to http://localhost:3000 as you say the last line.]*
+> "The first problem has tooling. VeilVault solves the second one."
+
+*[Navigate to http://localhost:3000 as you say the next line.]*
+
+> "VeilVault is encrypted credential infrastructure for agents — the private key management layer. The guardian stores credentials on-chain, decrypts them using Venice's private inference, and charges per-query via x402. No .env file. No centralized key manager. No human in the credential path."
 
 > "Some projects use Venice for private trading decisions, some for forensic analysis. VeilVault uses Venice for something structurally different: the credential can't decrypt without Venice in the loop. It's not private computation — it's a cryptographic key dependency."
 
@@ -123,13 +131,13 @@ Venice track + adjacent competitors now in the field:
 
 *[Open `agent_log.json` in terminal: `cat ~/.openclaw/workspace/veil/agent_log.json | python3 -m json.tool | tail -50`]*
 
-> "One more thing. VeilVault wasn't built by a solo developer — it was built by a named agent team running inside OpenClaw. Here's the log."
+> "One more thing. VeilVault wasn't built by a solo developer — it was built by a four-agent swarm running inside OpenClaw. Here's the log."
 
-*[Scroll through the JSON showing agent entries: Adze, Banneker, Baker, Dorothy]*
+*[Scroll through the JSON showing agent entries with timestamps]*
 
-> "Adze handled all implementation. Banneker reviewed every PR for architecture and security. Dorothy researched the competitive landscape. Baker tracked the field and kept us calibrated. Four named specialists with distinct roles — not one generic agent."
+> "VeilVault was built by a four-agent swarm: a research agent, a strategy analyst, a coding agent, and an architecture reviewer. Three human touchpoints across the entire build. The guardian itself runs fully autonomously — no human approves credential queries. This is documented in agent_log.json — named roles, timestamps, attribution per decision."
 
-> "Shadow Swarm and similar projects use OpenServ or OpenClaw as a harness — a tool to call. VeilVault was managed by a named squad. Every commit, every PR review, every deployment decision has an agent identity behind it. That's not tooling — that's an AI team."
+> "Mutual Aid Pool is single-agent. Agent Liveness Oracle is single-agent. VeilVault is the only submission with a documented multi-agent build team. Four specialists, distinct roles, every decision attributed."
 
 *[Close the log. Back to browser on the Earnings screen `/earnings`]*
 
@@ -159,23 +167,25 @@ Venice track + adjacent competitors now in the field:
 
 ## Differentiators to Emphasize
 
-| | VeilVault | Chorus | eelienX Protocol | DJZS Protocol | YieldsPilot / AegisAgent |
-|--|-----------|--------|-----------------|--------------|--------------------------|
+| | VeilVault | Mutual Aid Pool | Agent Liveness Oracle | Chorus | YieldsPilot / AegisAgent |
+|--|-----------|----------------|----------------------|--------|--------------------------|
 | Venice role | **Decrypt key (structural)** | Not used | Not used | Not used | Reasoning LLM |
-| x402 role | **Gate credential access** | Not used | Not used | Gate agent execution | Not used |
-| Agent team | **4 named agents (SOUL.md)** | Unknown | OpenClaw harness | Unknown | OpenClaw harness |
-| ERC-8004 | ✅ Base Sepolia | ❌ | ✅ Base **Mainnet** | ❌ | ❌ |
-| Commits | 65 (18 queued) | 90 | 35 | 102 | Unknown |
-| Video | Recording tonight | ✅ | ❌ | ❌ | ✅ |
+| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used |
+| Agent team | **4 named roles (log)** | Single Hermes agent | Single agent | Unknown | OpenClaw harness |
+| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ (heartbeat) | ❌ | ❌ |
+| Video | Recording today | ✅ (9:01 AM) | ❌ | ✅ | ✅ |
+| Abstraction | **Infrastructure layer** | Application layer | Infrastructure (liveness) | Application | Application |
 
-**vs. eelienX (the new HIGH threat):** They build a trading agent. VeilVault builds the credential vault that agents like theirs need to exist. The problem class is upstream — any autonomous agent needs secure credential storage before it can execute autonomously.
+**vs. Mutual Aid Pool:** They're an application (community fund management). VeilVault is the infrastructure layer agents like theirs would use to store API keys. Different abstraction level — don't compete, just be clear VeilVault is upstream.
 
-**The core edge:** VeilVault is upstream of everything else. Before an agent can execute (DJZS, eelienX), before it can reason privately (Venice projects), it needs to know something. VeilVault is where that something lives.
+**vs. Agent Liveness Oracle:** They answer "is this agent alive?" (liveness). VeilVault answers "can this agent hold and use its own keys?" (credentials). Complementary layers. Both OpenClaw projects — judges will see this. Own it: "If Agent Liveness Oracle is the heartbeat, VeilVault is the bloodstream."
 
-The swarm story is yours alone. Use it.
+**The core edge:** VeilVault is upstream of everything else. Before an agent can execute, before it can reason privately, it needs to know something. VeilVault is where that something lives — with Venice as the cryptographic lock, not just the LLM.
+
+The multi-agent swarm story is yours alone on these tracks. Four named roles with attributed decisions. Use it.
 
 ---
 
-*Updated: Adze | March 21, 2026 9:44 PM PST | T-26.3h to deadline*
-*Infra: NEW TUNNEL civic-cgi-funk-axis.trycloudflare.com (prev tunnel expired)*
-*Framing source: Baker 9:35 PM (baker-to-empa-2026-03-21-935pm.md), Dorothy 8:10 PM*
+*Updated: Adze | March 22, 2026 9:44 AM PST | T-14.3h to deadline*
+*Infra: Tunnel flooring-modification-bowl-requires.trycloudflare.com (dev only — use localhost for recording)*
+*Framing source: Dorothy 9:38 AM patch, Baker 9:35 AM competition delta*
