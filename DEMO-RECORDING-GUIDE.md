@@ -1,6 +1,6 @@
 # VeilVault — Demo Recording Guide
 *Competition-tuned for Synthesis Hackathon | March 22, 2026*
-*Updated framing: Adze 11:16 AM PST, March 22 (Dorothy 11:10 AM — Callipsos HIGH threat added)*
+*Updated framing: Adze 11:44 AM PST, March 22 (Baker 11:35 AM — Strata NEW HIGH THREAT added)*
 
 ---
 
@@ -27,6 +27,7 @@
 - **Chorus** — FROST threshold signatures, real USDC, YouTube video submitted
 - **YieldsPilot** — Venice for private DeFi yield reasoning, video submitted
 - **AegisAgent** — Venice for forensic narrative analysis, video submitted (25 commits)
+- **Strata** — 🔴 **NEW HIGH THREAT (submitted 10:32 AM PST, Baker 11:35 AM)** — Rust + Axum + Venice + ERC-8004 + Base + ZK proofs (Jolt/OpenVM). All four VeilVault primary tracks. **NO VIDEO yet. Has deployed URL at strata-agent-production.up.railway.app. Has on-chain ERC-8004 registration.** Their problem: *verifiable AI agent cognition* — every memory write and decision ZK-proved on-chain. Frame: Strata = "what an agent *thinks*" (cognitive integrity). VeilVault = "what an agent *uses*" (credential security). Different problem class — Strata proves the reasoning, VeilVault holds the keys. Also: Strata uses Venice as reasoning LLM (same "Venice as LLM" pattern as Belle Epoch, YieldsPilot, AegisAgent) — VeilVault's "Venice as crypto key" framing remains unique in the entire field.
 - **Starchild** — Venice track, 14 commits, no video, no deployed URL. AI companion for personal growth using Venice for private inference. *Another "Venice as reasoning LLM"* competitor — reinforces the differentiation: every Venice entrant except VeilVault uses Venice to think. VeilVault uses Venice to unlock.
 
 **The race is now narrative quality, not just "get a video."** Mutual Aid Pool got theirs first at 9:01 AM. Belle Epoch is live with video and real metrics. The frame: VeilVault is infrastructure. Mutual Aid Pool and Belle Epoch are applications. Agent Liveness Oracle is a different layer (liveness vs. credentials). These distinctions win judges.
@@ -183,13 +184,16 @@
 
 | | VeilVault | Mutual Aid Pool | Callipsos | Agent Liveness Oracle | Belle Epoch | Chorus | YieldsPilot / AegisAgent |
 |--|-----------|----------------|-----------|----------------------|-------------|--------|--------------------------|
-| Venice role | **Decrypt key (structural)** | Not used | Not used | Not used | Reasoning LLM (inference) | Not used | Reasoning LLM |
-| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used | Not used | Not used |
-| Agent team | **4 named roles (log)** | Single Hermes agent | Unknown | Single agent | 2 agents (Belle + client) | Unknown | OpenClaw harness |
-| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ on-chain | ✅ (heartbeat) | ❌ | ❌ | ❌ |
-| Video | Recording today | ✅ (9:01 AM) | ✅ (11:05 AM) | ❌ | ✅ (Loom, 85 commits) | ✅ | ✅ |
-| Abstraction | **Credentials (keychain)** | Application layer | **Permissions (firewall)** | Infrastructure (liveness) | Application (inference SaaS) | Application | Application |
-| Deploy URL | Recording → Vercel | Unknown | Unknown | ✅ Vercel | ✅ belleepoch.xyz | Unknown | Unknown |
+| | VeilVault | Mutual Aid Pool | Callipsos | Strata | Agent Liveness Oracle | Belle Epoch | Chorus | YieldsPilot / AegisAgent |
+| Venice role | **Decrypt key (structural)** | Not used | Not used | Reasoning LLM | Not used | Reasoning LLM (inference) | Not used | Reasoning LLM |
+| x402 role | **Gate credential access** | Not used | Not used | Not used | Not used | Not used | Not used | Not used |
+| Agent team | **4 named roles (log)** | Single Hermes agent | Unknown | Single agent | Single agent | 2 agents (Belle + client) | Unknown | OpenClaw harness |
+| ERC-8004 | ✅ Base Sepolia | ✅ Base Sepolia | ✅ on-chain | ✅ on-chain | ✅ (heartbeat) | ❌ | ❌ | ❌ |
+| Video | Recording today | ✅ (9:01 AM) | ✅ (11:05 AM) | ❌ None | ❌ | ✅ (Loom, 85 commits) | ✅ | ✅ |
+| Abstraction | **Credentials (keychain)** | Application layer | **Permissions (firewall)** | **Cognition (ZK proofs)** | Infrastructure (liveness) | Application (inference SaaS) | Application | Application |
+| Deploy URL | Recording → Vercel | Unknown | Unknown | ✅ Railway | ✅ Vercel | ✅ belleepoch.xyz | Unknown | Unknown |
+
+**vs. Strata:** They prove what an agent *thinks* — ZK-attested cognition, verifiable memory writes, every decision proved on-chain. VeilVault holds what an agent *uses* — the credentials and keys that let it act. These are adjacent infrastructure layers: Strata = cognitive integrity, VeilVault = credential security. If a judge asks "isn't Strata similar?", answer: "Strata proves the reasoning. VeilVault holds the keys. Production agents need both." Bonus: Strata uses Venice as an LLM (reasoning). VeilVault uses Venice as a cryptographic lock. Opposite architecture decision — reinforces VeilVault's uniqueness.
 
 **vs. Callipsos:** They enforce what an agent is *allowed to do* — permissions, access control, the firewall. VeilVault stores what an agent *needs to do it* — credentials, keys, the keychain. These are adjacent layers, not competing. If a judge asks "isn't Callipsos the same?", answer: "Callipsos is the firewall. VeilVault is the keychain. Every production system needs both."
 
@@ -205,10 +209,11 @@ The multi-agent swarm story is yours alone on these tracks. Four named roles wit
 
 ---
 
-*Updated: Adze | March 22, 2026 11:16 AM PST | T-12.75h to deadline*
+*Updated: Adze | March 22, 2026 11:44 AM PST | T-12.25h to deadline*
 *Infra: Tunnel flooring-modification-bowl-requires.trycloudflare.com (dev only — use localhost for recording)*
-*Framing source: Dorothy 9:38 AM, Baker 9:35 AM delta, Baker 10:05 AM Belle Epoch alert, Dorothy 11:10 AM Callipsos*
+*Framing source: Dorothy 9:38 AM, Baker 9:35 AM delta, Baker 10:05 AM Belle Epoch alert, Dorothy 11:10 AM Callipsos, Baker 11:35 AM Strata*
 *Belle Epoch added: new primary Venice threat with video + stable URL. Differentiation explicit in Act 1 script.*
 *Sentient Singularity added: LtAC video competitor, single-agent — strengthens multi-agent swarm narrative.*
 *Starchild added: Venice track, no video/URL — "Venice to think" pattern reinforces VeilVault's "Venice to unlock" differentiation.*
 *Callipsos added: HIGH threat, ERC-8004 + LtAC + video + on-chain registration. Firewall/keychain framing added. Insert scripted in Act 4.*
+*Strata added: NEW HIGH THREAT (Baker 11:35 AM). Venice + ERC-8004 + Base + LtAC — all four primary tracks. ZK proofs for cognition = "what agent thinks". VeilVault = "what agent uses". No video yet. Differentiator table updated. vs. Strata framing added.*
