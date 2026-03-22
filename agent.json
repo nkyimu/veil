@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "name": "VeilVault Guardian",
-  "description": "An autonomous AI guardian that monetizes your private data without exposing it. Stores credentials on Base, listens for incoming queries, generates ZK proofs, and auto-routes USDC earnings. No human required per query cycle.",
+  "description": "An autonomous AI guardian that monetizes your private data without exposing it. Stores credentials on Base, listens for incoming queries, generates ZK proofs, and auto-routes USDC earnings. No human required per query cycle. VeilVault pairs ERC-8004 agent identity with encrypted on-chain credential storage — agents earn trust through verifiable identity, then use that identity to gate access to their operational secrets.",
   "version": "1.0.0",
   "hackathon": "synthesis-2026",
   "deployedContract": "0x2f881af96415a452807baf6a23b73129d57f8d7a",
@@ -13,7 +13,16 @@
     "contractAddress": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
     "registrationTx": "pending-registration",
     "_registryNote": "contractAddress is the ERC-8004 IdentityRegistry on Base Sepolia (source: github.com/erc-8004/erc-8004-contracts). tokenId and registrationTx will be populated after running: GUARDIAN_PRIVATE_KEY=0x... npm run register-erc8004",
-    "_agentRegistry": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e"
+    "_agentRegistry": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e",
+    "registriesUsed": [
+      {
+        "registry": "IdentityRegistry",
+        "address": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+        "purpose": "Guardian agent identity registration — establishes verifiable on-chain agent persona",
+        "interaction": "registerAgent() on startup, used to gate credential storage access"
+      }
+    ],
+    "erc8004Role": "VeilVault is the credential layer above identity infrastructure — trusted agents (verified via IdentityRegistry) use that identity to gate access to their operational secrets stored in VeilVault"
   },
   "supportedTools": [
     "foundry",
@@ -68,5 +77,7 @@
     ]
   },
   "repoUrl": "https://github.com/blu3dot/veil",
-  "demoUrl": "http://localhost:3000"
+  "demoUrl": "https://civic-cgi-funk-axis.trycloudflare.com",
+  "deployedURL": "https://civic-cgi-funk-axis.trycloudflare.com",
+  "_deployNote": "Cloudflare Quick Tunnel — active while Cerebro (Amantu's Mac) is running. Hosted from local standalone Next.js build. Upgrade to Railway/Cloudflare Pages with git push after PAT rotation."
 }
