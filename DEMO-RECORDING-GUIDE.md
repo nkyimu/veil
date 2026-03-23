@@ -51,6 +51,7 @@
 - **Starchild** — Venice (Private Agents) + **ERC-8004 + Base** (confirmed Baker 12:35 PM). 14 commits, no video, no deployed URL. Zero-data-retention personal AI companion using Venice for private inference. *Another "Venice as reasoning LLM"* competitor — reinforces the differentiation: every Venice entrant except VeilVault uses Venice to think. VeilVault uses Venice to unlock. Now confirmed on ERC-8004 — but no on-chain registration, no video. MEDIUM threat.
 - **Astrolabe** — 🔴 **NEW HIGH THREAT (Baker 12:05 PM)** — Venice + ERC-8004 + LtAC + Open. ERC-8004 #35601 deployed on **Base mainnet**. Uses Venice as a *bridge between models* — Claude writes a correction, transfers it to Llama through Venice. No video. Different architecture class: inter-model transfer layer. VeilVault uses Venice as a cryptographic lock, not a transfer bridge. "Claude-written corrections transferred to Llama through Venice" = impressive engineering. Zero overlap with VeilVault's value prop.
 - **AgentFlow** — 🔴 **NEW HIGH THREAT (Baker 1:05 PM — Banneker validated)** — Venice + 8 tracks, **HAS VIDEO (YouTube)**, Vercel deployed, **43-agent portfolio/financial reasoning system**. Most polished project in the hackathon. Uses Venice for private LLM inference on financial data. *Venice as reasoning engine* — same class as Belle Epoch. VeilVault is the opposite end of the stack: Venice as the lock, not the brain. The existing "Venice as lock" frame covers this completely. If a judge compares: "AgentFlow uses Venice to think about portfolios. VeilVault uses Venice to unlock the keys that give agents access. Different layer — AgentFlow is the application, VeilVault is the infrastructure it would run on."
+- **Charon** — 🔴 **NEW HIGH THREAT (Baker 7:35 PM) — CLOSEST ARCHITECTURAL PARALLEL** — Venice "Private Agents, Trusted Actions" + ERC-8004 + LtAC. **HAS VIDEO (YouTube). Deployed on EigenCompute Intel TDX TEE (live attestation).** Problem statement: *"holds secrets and releases them on verifiable conditions."* Autonomous agent running inside a TEE — secrets live in TEE runtime compute, never persisted on-chain. This is the most architecturally similar submission found. **Key differentiation:** Charon's trust root is TEE hardware. VeilVault's trust root is Venice's zero-data-retention inference. These are genuinely different security models: "Charon's secret dies when the TEE machine dies. VeilVault stores credentials on-chain — they persist across any restart, any hardware failure. Venice is the unlock key, not the storage layer. No special hardware required." VeilVault advantage: on-chain persistence, auditable decrypt path, hardware-agnostic. Charon advantage: has running video + deployment. Frame if pressed: "Charon is hardware-based secret management. VeilVault is chain-based credential sovereignty. Same problem, different trust root. A judge who knows the stack knows these aren't substitutes."
 
 **The race is now narrative quality, not just "get a video."** Mutual Aid Pool got theirs first at 9:01 AM. Belle Epoch is live with video and real metrics. The frame: VeilVault is infrastructure. Mutual Aid Pool and Belle Epoch are applications. Agent Liveness Oracle is a different layer (liveness vs. credentials). These distinctions win judges.
 
@@ -102,7 +103,7 @@
 >
 > Venice is not the brain. Venice is the vault door."
 
-*[This frame must land before judges see the UI. With five Venice video competitors — Belle Epoch, AgentFlow, YieldMind, BuddyPie, BriefLock — judges need this before seeing the demo or VeilVault reads as the sixth Venice project rather than the only one with a unique architectural role.]*
+*[This frame must land before judges see the UI. With six Venice video competitors — Belle Epoch, AgentFlow, YieldMind, BuddyPie, BriefLock, Charon — judges need this before seeing the demo or VeilVault reads as the seventh Venice project rather than the only one with a unique architectural role. Charon is the closest architectural parallel: TEE-based secrets vs. VeilVault's on-chain persistence. The Act 0 frame covers both classes: Venice as brain vs. Venice as lock. Trust root is hardware (Charon) vs. chain (VeilVault) — different security models, not competing solutions.]*
 
 ---
 
@@ -242,6 +243,15 @@
 
 ---
 
+*[OPTIONAL 20-second insert — vs. Charon (use if asked about TEE/secret-holding overlap — Baker 7:35 PM)]*
+
+> "Charon is impressive — a TEE running inside EigenCompute that holds secrets and releases them on verifiable conditions.
+> The trust root is hardware. If that TEE machine goes down, the secret is gone — it lives in runtime compute, not on-chain.
+> VeilVault stores credentials on-chain, encrypted. They persist forever — any hardware failure, any restart. Venice is the unlock key, not the storage layer.
+> Charon is hardware-based secret management. VeilVault is chain-based credential sovereignty. Same problem, different trust model."
+
+---
+
 > "VeilVault. Venice isn't the LLM — Venice is the lock."
 
 *[End recording.]*
@@ -320,7 +330,7 @@ The multi-agent swarm story is yours alone on these tracks. Four named roles wit
 
 ---
 
-*Updated: Adze | March 22, 2026 6:44 PM PST | T-5.25h to deadline*
+*Updated: Adze | March 22, 2026 7:44 PM PST | T-4.25h to deadline*
 *Infra: Tunnel flooring-modification-bowl-requires.trycloudflare.com (dev only — use localhost for recording)*
 *Framing source: Dorothy 9:38 AM, Baker 9:35 AM delta, Baker 10:05 AM Belle Epoch alert, Dorothy 11:10 AM Callipsos, Baker 11:35 AM Strata, Baker 12:05 PM Astrolabe + Agent Council DAO, Banneker validated 12:12 PM, Baker 12:35 PM PACT + Starchild ERC-8004 confirmation, Baker 1:05 PM AgentFlow, Banneker validated 1:11 PM, Dorothy 1:38 PM YieldMind + Act 0 Venice opener, Dorothy 2:09 PM BuddyPie, Baker 2:35 PM ZK-Gated API + TrustAgent, Baker 4:05 PM Agora.zk + Lookout + MerkleCoord + MiniClaw (field now 23), Baker 4:35 PM Shulam + Agent Allowance Protocol + The Obol Stack (field now 26), Baker 5:35 PM BaseClaw + Ouroboros (field now 29)*
 *⚠️ Celo track correction (Baker 4:05 PM): MiniClaw (359 commits), Agora.zk, Fera Protocol, Lookout all on Celo. Skip intent-circles — focus on VeilVault.*
@@ -346,3 +356,4 @@ The multi-agent swarm story is yours alone on these tracks. Four named roles wit
 *2026-03-22 17:44 — Baker 5:35 PM delta: field now 29 projects. BaseClaw (Venice "Private Agents" + 7 tracks, double-TEE EigenCloud+Venice, deployed baseclaw.com, no video — MODERATE threat, VeilVault's "Venice as lock" remains unclaimed). Ouroboros (ERC-8004+LtAC+Trading+Yield, no video — LOW, self-sustaining DeFi agent, non-competing domain). No demo script changes — Banneker 5:41 PM confirmed VeilVault lane unchallenged. Sunday evening field pace accelerating. — Adze*
 *2026-03-22 18:14 — Baker 6:05 PM delta: field now 31 projects. BriefLock (Venice "Private Agents" + video + brieflock.org, MODERATE — brief generation/planning tool, OpenClaw harness, NOT credential storage). ANP Sovereign Node (ERC-8004+Agent Services, no video, LOW — job negotiation/escrow). Act 0 updated to 5 Venice video competitors. VeilVault lane unchallenged (Dorothy 6:08 PM, Banneker 6:11 PM). Differentiators table expanded to 21 projects. — Adze*
 *2026-03-22 18:44 — Baker 6:35 PM delta: field now 36 projects. AgentChain (ERC-8004+LtAC+Agent Services, NOTABLE — 85 Foundry tests, 4 deployed contracts, DeepMind paper citation, 4-agent Uniswap swarm, NO VIDEO — agent hiring/coordination layer, complementary not competing). Forge Protocol (ERC-8004+LtAC, MODERATE — no video, agent permissioning framework). Gitlawb Playground/Imperium/Student Founder Copilot (LOW — not VeilVault tracks). Differentiators table expanded to 23 projects. Video still the key differentiator against AgentChain's technical depth. VeilVault lane unchallenged. — Adze*
+*2026-03-22 19:44 — Baker 7:35 PM delta: field now ~40 projects (+5 no-video: OmniAgent, Lockbox, The Dojo, Clankonomy, PAR). NEW HIGH THREAT: Charon (Venice+ERC-8004+LtAC, HAS VIDEO, EigenCompute Intel TDX TEE, "holds secrets and releases them on verifiable conditions" — closest architectural parallel found). Charon trust root = TEE hardware (secret dies if machine dies). VeilVault trust root = chain + Venice (persists forever). Venice field now 35+ total, 17+ with video. Act 0 updated to 6 Venice video competitors. vs. Charon insert added. Venice "Venice as lock" framing still unclaimed — Charon uses "TEE holds" not "Venice unlocks." — Adze*
